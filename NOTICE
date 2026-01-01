@@ -1,0 +1,11 @@
+Kafka on Azure
+Copyright (c) 2026 Roger Clevenger
+
+Builds on the MIT-licensed rclevenger-hm/kafka-oci-deployment,
+rclevenger-hm/kafka-gcp-deployment, and rclevenger-hm/kafka-aws-deployment projects.
+The original copyright and permission notice remains in LICENSE.
+
+January–September 2026 author and committer timestamps were reconstructed during
+repository creation in October 2026. They describe an incremental retrospective
+sequence of actual file changes, not evidence of development on those dates.
+Repository bootstrap, history import, and maintenance commits use actual dates.
