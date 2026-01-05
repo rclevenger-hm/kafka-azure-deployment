@@ -29,3 +29,19 @@ make integration
 
 Repository checks require no Azure credentials and create no cloud resources. Terraform uses the committed provider lockfile and an Azure Blob backend with lease locking. An optional manual [deployment workflow](.github/workflows/deploy.yml) requires your own private runner, workload identity and protected environment.
 
+## Topology
+
+```mermaid
+flowchart TB
+  Clients["Private applications"] -->|"9092 mTLS"| Brokers["3–18 brokers / 3 zones"]
+  Brokers -->|"9093 mTLS"| Controllers["3 dedicated controllers"]
+  Brokers --- Disks["Separate managed data disks"]
+  Controllers --- Disks
+  Blob["Versioned node manifests"] --> Brokers
+  Blob --> Controllers
+  Vault["Pinned Key Vault TLS versions"] --> Brokers
+  Vault --> Controllers
+```
+
+Clients need private routing and resolution for every advertised broker. Nodes have no public IPs. Run Command offers management through the VM agent; an existing Bastion/private SSH path is optional and its CIDR defaults closed. The runtime storage public endpoint permits only the existing deployment subnet; nodes use its private endpoint. Key Vault public access must be disabled.
+
