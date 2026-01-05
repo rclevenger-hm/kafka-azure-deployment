@@ -17,3 +17,15 @@ Builds on the [AWS](https://github.com/rclevenger-hm/kafka-aws-deployment), [GCP
 - Health, smoke, capacity and Azure administration tools; Prometheus alerts, a Grafana dashboard, VNet flow logs and VM availability alerts.
 - Python regression tests, Terraform mock plans and a real six-process exercise covering TLS, denied ACLs, broker outage writes, retained data and controller leader failover.
 
+## Start here
+
+Read [deployment](docs/deployment.md), [security](docs/security.md) and [capacity](docs/capacity-planning.md). Bring an existing protected state account, private management runner, RBAC-enabled private Key Vault, six pinned TLS secret versions and a reviewed Ubuntu 24.04 image version. Example inputs deliberately contain placeholders.
+
+```bash
+make check
+make terraform
+make integration
+```
+
+Repository checks require no Azure credentials and create no cloud resources. Terraform uses the committed provider lockfile and an Azure Blob backend with lease locking. An optional manual [deployment workflow](.github/workflows/deploy.yml) requires your own private runner, workload identity and protected environment.
+
