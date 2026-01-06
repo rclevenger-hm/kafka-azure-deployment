@@ -45,3 +45,9 @@ flowchart TB
 
 Clients need private routing and resolution for every advertised broker. Nodes have no public IPs. Run Command offers management through the VM agent; an existing Bastion/private SSH path is optional and its CIDR defaults closed. The runtime storage public endpoint permits only the existing deployment subnet; nodes use its private endpoint. Key Vault public access must be disabled.
 
+## Boundaries and resources
+
+Default infrastructure includes six VMs, 1,650 GiB of data disks, six 32 GiB OS disks, three NAT gateways/public egress IPs, two private endpoints and six availability alerts. Flow logs add a storage account. Review regional availability, quota and pricing before applying.
+
+Prometheus/Grafana servers, client connectivity, organizational PKI, the existing Network Watcher, human permissions and remote disaster recovery clusters are prerequisites or separate systems. A successful apply is not Kafka readiness. Live Azure provisioning, agent access, disk recovery, zone failure, performance and DR remain environment-specific acceptance gates.
+
