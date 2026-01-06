@@ -51,3 +51,15 @@ Default infrastructure includes six VMs, 1,650 GiB of data disks, six 32 GiB OS 
 
 Prometheus/Grafana servers, client connectivity, organizational PKI, the existing Network Watcher, human permissions and remote disaster recovery clusters are prerequisites or separate systems. A successful apply is not Kafka readiness. Live Azure provisioning, agent access, disk recovery, zone failure, performance and DR remain environment-specific acceptance gates.
 
+## Repository map
+
+| Path | Purpose |
+|---|---|
+| [terraform](terraform/README.md) | Azure infrastructure, inputs and mock plans |
+| [bootstrap](bootstrap/provision.py) | Managed disk, identity, TLS and runtime installation |
+| [tools](tools/azure_admin.py) | Administration, health, smoke, capacity and lab PKI |
+| [monitoring](monitoring/alerts.yml) | Rules, tests, scrape example and dashboard |
+| [tests](tests/integration.py) | Regression and six-process fault exercises |
+| [docs](docs/README.md) | Deployment and operating guides |
+
+[MIT license](LICENSE). See [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md) and [NOTICE](NOTICE).
