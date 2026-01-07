@@ -15,3 +15,9 @@ provider "azurerm" {
   resource_provider_registrations = "none"
 }
 data "azurerm_client_config" "current" {}
+resource "azurerm_resource_group" "kafka" {
+  name     = "${var.name_prefix}-rg"
+  location = var.region
+  tags     = local.tags
+  lifecycle { prevent_destroy = true }
+}
