@@ -42,3 +42,14 @@ variable "broker_count" {
 }
 
 
+variable "dns_domain" {
+  description = "Private DNS suffix without trailing dot; dedicated zone."
+  type        = string
+  default     = "kafka.internal"
+  validation {
+    condition     = can(regex("^[a-z][a-z0-9.-]*[a-z0-9]$", var.dns_domain)) && strcontains(var.dns_domain, ".")
+    error_message = "Use a lowercase DNS domain with no trailing dot."
+  }
+}
+
+
