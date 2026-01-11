@@ -75,3 +75,14 @@ variable "kafka_version" {
 }
 
 
+variable "kafka_sha512" {
+  description = "Expected SHA-512 for the exact Kafka tarball."
+  type        = string
+  default     = "c7d7b2318cb51aa0c61d3246a51c349210073c5c9b754947ef965a439f2f939e8600f204e134a75ac31faf3829c9370960ef7c6a9886c8a1dbf0339a21f4c54c"
+  validation {
+    condition     = can(regex("^[a-f0-9]{128}$", var.kafka_sha512))
+    error_message = "Provide a lowercase SHA-512 digest."
+  }
+}
+
+
