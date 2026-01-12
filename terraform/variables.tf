@@ -105,3 +105,12 @@ variable "subscription_id" {
     error_message = "Provide the target subscription UUID."
   }
 }
+variable "region" {
+  type        = string
+  default     = "eastus"
+  description = "Region supporting three zones, Dsv5 VMs and Premium SSD v2."
+  validation {
+    condition     = can(regex("^[a-z][a-z0-9]{2,30}$", var.region))
+    error_message = "Use an Azure location identifier such as eastus."
+  }
+}
