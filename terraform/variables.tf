@@ -97,3 +97,11 @@ variable "retention_hours" {
 }
 
 
+variable "subscription_id" {
+  type        = string
+  description = "Azure public-cloud subscription."
+  validation {
+    condition     = can(regex("^[a-f0-9-]{36}$", var.subscription_id))
+    error_message = "Provide the target subscription UUID."
+  }
+}
