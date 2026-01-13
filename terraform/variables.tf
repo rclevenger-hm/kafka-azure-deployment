@@ -122,3 +122,11 @@ variable "zones" {
     error_message = "Use the three distinct logical availability zones 1, 2 and 3."
   }
 }
+variable "vnet_cidr" {
+  type    = string
+  default = "10.42.0.0/16"
+  validation {
+    condition     = can(cidrnetmask(var.vnet_cidr)) && can(regex("^(10\\.|192\\.168\\.|172\\.(1[6-9]|2[0-9]|3[01])\\.)", var.vnet_cidr)) && try(tonumber(split("/", var.vnet_cidr)[1]) >= 16 && tonumber(split("/", var.vnet_cidr)[1]) <= 20, false)
+    error_message = "Use an RFC1918 IPv4 VNet between /16 and /20."
+  }
+}
