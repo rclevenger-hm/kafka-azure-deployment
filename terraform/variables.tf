@@ -114,3 +114,11 @@ variable "region" {
     error_message = "Use an Azure location identifier such as eastus."
   }
 }
+variable "zones" {
+  type    = list(string)
+  default = ["1", "2", "3"]
+  validation {
+    condition     = length(var.zones) == 3 && toset(var.zones) == toset(["1", "2", "3"])
+    error_message = "Use the three distinct logical availability zones 1, 2 and 3."
+  }
+}
