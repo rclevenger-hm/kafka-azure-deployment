@@ -130,3 +130,11 @@ variable "vnet_cidr" {
     error_message = "Use an RFC1918 IPv4 VNet between /16 and /20."
   }
 }
+variable "ubuntu_image_version" {
+  type        = string
+  description = "Reviewed Canonical ubuntu-24_04-lts:server image version in region, never latest."
+  validation {
+    condition     = can(regex("^[0-9]+\\.[0-9]+\\.[0-9]+$", var.ubuntu_image_version))
+    error_message = "Pin an explicit Ubuntu image version."
+  }
+}
