@@ -146,3 +146,12 @@ variable "admin_ssh_public_key" {
     error_message = "Provide a single-line OpenSSH public key."
   }
 }
+variable "admin_cidrs" {
+  type        = set(string)
+  default     = []
+  description = "Optional private SSH source networks; prefer Azure Run Command or an existing Bastion."
+  validation {
+    condition     = alltrue([for c in var.admin_cidrs : can(cidrnetmask(c)) && try(tonumber(split("/", c)[1]) >= 24, false) && can(regex("^(10\\.|192\\.168\\.|172\\.(1[6-9]|2[0-9]|3[01])\\.)", c))])
+    error_message = "Admin access requires private IPv4 CIDRs of /24 or narrower."
+  }
+}
