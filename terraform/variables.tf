@@ -138,3 +138,11 @@ variable "ubuntu_image_version" {
     error_message = "Pin an explicit Ubuntu image version."
   }
 }
+variable "admin_ssh_public_key" {
+  type        = string
+  description = "Existing RSA or Ed25519 public key; private key stays outside Terraform. SSH ingress defaults closed."
+  validation {
+    condition     = can(regex("^(ssh-rsa|ssh-ed25519) [A-Za-z0-9+/]+=*( [^\\r\\n]+)?$", var.admin_ssh_public_key))
+    error_message = "Provide a single-line OpenSSH public key."
+  }
+}
