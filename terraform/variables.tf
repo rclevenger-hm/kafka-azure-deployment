@@ -155,3 +155,11 @@ variable "admin_cidrs" {
     error_message = "Admin access requires private IPv4 CIDRs of /24 or narrower."
   }
 }
+variable "deployment_subnet_id" {
+  type        = string
+  description = "Existing self-hosted Terraform runner subnet with Microsoft.Storage service endpoint enabled."
+  validation {
+    condition     = can(regex("^/subscriptions/[a-f0-9-]{36}/resourceGroups/[^/]+/providers/Microsoft.Network/virtualNetworks/[^/]+/subnets/[^/]+$", var.deployment_subnet_id))
+    error_message = "Provide the existing deployment subnet ARM ID."
+  }
+}
