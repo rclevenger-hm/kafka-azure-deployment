@@ -163,3 +163,11 @@ variable "deployment_subnet_id" {
     error_message = "Provide the existing deployment subnet ARM ID."
   }
 }
+variable "key_vault_name" {
+  type        = string
+  description = "Existing RBAC-enabled, public-network-disabled vault containing node TLS JSON secrets."
+  validation {
+    condition     = can(regex("^[a-z][a-z0-9-]{1,22}[a-z0-9]$", var.key_vault_name))
+    error_message = "Use a valid lowercase Key Vault name."
+  }
+}
