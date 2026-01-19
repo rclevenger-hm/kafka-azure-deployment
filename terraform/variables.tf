@@ -171,3 +171,4 @@ variable "key_vault_name" {
     error_message = "Use a valid lowercase Key Vault name."
   }
 }
+variable "key_vault_resource_group" { type = string }
