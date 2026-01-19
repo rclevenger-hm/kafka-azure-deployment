@@ -172,3 +172,12 @@ variable "key_vault_name" {
   }
 }
 variable "key_vault_resource_group" { type = string }
+variable "tls_secrets" {
+  type        = map(object({ name = string, version = string }))
+  description = "Exactly one distinct existing secret per node; immutable version, no secret values."
+  validation {
+    condition     = alltrue([for s in values(var.tls_secrets) : can(regex("^[A-Za-z0-9-]{1,127}$", s.name)) && can(regex("^[a-f0-9]{32}$", s.version))])
+    error_message = "Use a Key Vault secret name and immutable 32-hex version."
+  }
+}
+
