@@ -191,3 +191,13 @@ variable "broker_vm_size" {
   }
 }
 
+variable "controller_vm_size" {
+  type        = string
+  default     = "Standard_D2s_v5"
+  description = "SCSI x86_64 Dsv5 profile; review zone quota and disk bandwidth."
+  validation {
+    condition     = can(regex("^Standard_D(2|4|8|16|32|48|64|96)s_v5$", var.controller_vm_size))
+    error_message = "Use a supported Dsv5 SCSI VM size."
+  }
+}
+
