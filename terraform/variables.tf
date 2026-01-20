@@ -201,3 +201,13 @@ variable "controller_vm_size" {
   }
 }
 
+variable "broker_disk_gb" {
+  type        = number
+  default     = 500
+  description = "Premium SSD v2 broker disk size in GiB."
+  validation {
+    condition     = var.broker_disk_gb >= 20 && var.broker_disk_gb <= 16384 && floor(var.broker_disk_gb) == var.broker_disk_gb
+    error_message = "Invalid broker_disk_gb; use whole values within the documented bounds."
+  }
+}
+
