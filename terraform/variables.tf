@@ -211,3 +211,13 @@ variable "broker_disk_gb" {
   }
 }
 
+variable "controller_disk_gb" {
+  type        = number
+  default     = 50
+  description = "Premium SSD v2 controller disk size in GiB."
+  validation {
+    condition     = var.controller_disk_gb >= 20 && var.controller_disk_gb <= 16384 && floor(var.controller_disk_gb) == var.controller_disk_gb
+    error_message = "Invalid controller_disk_gb; use whole values within the documented bounds."
+  }
+}
+
