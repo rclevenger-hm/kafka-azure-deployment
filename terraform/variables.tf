@@ -221,3 +221,13 @@ variable "controller_disk_gb" {
   }
 }
 
+variable "broker_disk_iops" {
+  type        = number
+  default     = 3000
+  description = "Broker Premium SSD v2 IOPS."
+  validation {
+    condition     = var.broker_disk_iops >= 3000 && var.broker_disk_iops <= 80000 && floor(var.broker_disk_iops) == var.broker_disk_iops && var.broker_disk_iops <= var.broker_disk_gb * 500
+    error_message = "Invalid broker_disk_iops; use whole values within the documented bounds."
+  }
+}
+
