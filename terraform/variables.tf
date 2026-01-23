@@ -231,3 +231,13 @@ variable "broker_disk_iops" {
   }
 }
 
+variable "broker_disk_throughput" {
+  type        = number
+  default     = 125
+  description = "Broker Premium SSD v2 throughput in MB/s."
+  validation {
+    condition     = var.broker_disk_throughput >= 125 && var.broker_disk_throughput <= 1200 && floor(var.broker_disk_throughput) == var.broker_disk_throughput && var.broker_disk_throughput <= var.broker_disk_iops / 4
+    error_message = "Invalid broker_disk_throughput; use whole values within the documented bounds."
+  }
+}
+
