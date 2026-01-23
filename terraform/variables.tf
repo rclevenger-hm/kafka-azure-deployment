@@ -241,3 +241,13 @@ variable "broker_disk_throughput" {
   }
 }
 
+variable "log_retention_days" {
+  type        = number
+  default     = 30
+  description = "Diagnostic retention in days."
+  validation {
+    condition     = var.log_retention_days >= 30 && var.log_retention_days <= 365 && floor(var.log_retention_days) == var.log_retention_days
+    error_message = "Invalid log_retention_days; use whole values within the documented bounds."
+  }
+}
+
