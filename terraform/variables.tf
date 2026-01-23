@@ -251,3 +251,8 @@ variable "log_retention_days" {
   }
 }
 
+variable "enable_flow_logs" {
+  type        = bool
+  default     = true
+  description = "VNet flow logs using an existing regional Network Watcher."
+}
