@@ -265,3 +265,12 @@ variable "network_watcher_resource_group" {
   type    = string
   default = "NetworkWatcherRG"
 }
+variable "action_group_ids" {
+  type        = set(string)
+  default     = []
+  description = "Existing Azure Monitor action groups; empty creates alerts without notifications."
+  validation {
+    condition     = alltrue([for id in var.action_group_ids : can(regex("^/subscriptions/[a-f0-9-]{36}/resourceGroups/[^/]+/providers/[Mm]icrosoft\\.[Ii]nsights/action[Gg]roups/[^/]+$", id))])
+    error_message = "Use Azure Monitor action group ARM IDs."
+  }
+}
