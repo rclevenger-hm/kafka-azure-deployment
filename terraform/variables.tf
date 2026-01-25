@@ -261,3 +261,7 @@ variable "network_watcher_name" {
   default     = "NetworkWatcher_eastus"
   description = "Existing Network Watcher in region; change with region."
 }
+variable "network_watcher_resource_group" {
+  type    = string
+  default = "NetworkWatcherRG"
+}
