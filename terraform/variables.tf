@@ -256,3 +256,8 @@ variable "enable_flow_logs" {
   default     = true
   description = "VNet flow logs using an existing regional Network Watcher."
 }
+variable "network_watcher_name" {
+  type        = string
+  default     = "NetworkWatcher_eastus"
+  description = "Existing Network Watcher in region; change with region."
+}
