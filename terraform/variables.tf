@@ -274,3 +274,7 @@ variable "action_group_ids" {
     error_message = "Use Azure Monitor action group ARM IDs."
   }
 }
+variable "tags" {
+  type    = map(string)
+  default = {}
+}
