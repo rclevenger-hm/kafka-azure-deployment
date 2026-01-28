@@ -14,3 +14,7 @@ locals {
   runtime_files       = { for f in ["provision.py", "kafka.service", "kafka.env", "jmx.yml", "azure.py"] : f => file("${path.module}/../bootstrap/${f}") }
 }
 resource "random_id" "cluster" { byte_length = 16 }
+resource "random_id" "controller_directory" {
+  for_each    = local.controllers
+  byte_length = 16
+}
