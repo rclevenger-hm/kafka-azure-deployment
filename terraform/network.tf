@@ -13,3 +13,11 @@ resource "azurerm_subnet" "nodes" {
   address_prefixes                = [cidrsubnet(var.vnet_cidr, 3, each.value)]
   default_outbound_access_enabled = false
 }
+resource "azurerm_subnet" "endpoints" {
+  name                              = "private-endpoints"
+  resource_group_name               = azurerm_resource_group.kafka.name
+  virtual_network_name              = azurerm_virtual_network.kafka.name
+  address_prefixes                  = [cidrsubnet(var.vnet_cidr, 3, 3)]
+  default_outbound_access_enabled   = false
+  private_endpoint_network_policies = "Enabled"
+}
