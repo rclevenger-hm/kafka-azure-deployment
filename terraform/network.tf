@@ -21,3 +21,13 @@ resource "azurerm_subnet" "endpoints" {
   default_outbound_access_enabled   = false
   private_endpoint_network_policies = "Enabled"
 }
+resource "azurerm_public_ip" "nat" {
+  for_each            = local.azs
+  name                = "${var.name_prefix}-egress-${each.key}"
+  resource_group_name = azurerm_resource_group.kafka.name
+  location            = var.region
+  allocation_method   = "Static"
+  sku                 = "Standard"
+  zones               = [each.key]
+  tags                = local.tags
+}
