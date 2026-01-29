@@ -31,3 +31,13 @@ resource "azurerm_public_ip" "nat" {
   zones               = [each.key]
   tags                = local.tags
 }
+resource "azurerm_nat_gateway" "egress" {
+  for_each                = local.azs
+  name                    = "${var.name_prefix}-nat-${each.key}"
+  resource_group_name     = azurerm_resource_group.kafka.name
+  location                = var.region
+  sku_name                = "Standard"
+  zones                   = [each.key]
+  idle_timeout_in_minutes = 10
+  tags                    = local.tags
+}
