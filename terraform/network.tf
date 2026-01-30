@@ -46,3 +46,8 @@ resource "azurerm_nat_gateway_public_ip_association" "egress" {
   nat_gateway_id       = azurerm_nat_gateway.egress[each.key].id
   public_ip_address_id = azurerm_public_ip.nat[each.key].id
 }
+resource "azurerm_subnet_nat_gateway_association" "egress" {
+  for_each       = local.azs
+  subnet_id      = azurerm_subnet.nodes[each.key].id
+  nat_gateway_id = azurerm_nat_gateway.egress[each.key].id
+}
