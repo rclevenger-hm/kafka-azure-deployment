@@ -41,3 +41,8 @@ resource "azurerm_nat_gateway" "egress" {
   idle_timeout_in_minutes = 10
   tags                    = local.tags
 }
+resource "azurerm_nat_gateway_public_ip_association" "egress" {
+  for_each             = local.azs
+  nat_gateway_id       = azurerm_nat_gateway.egress[each.key].id
+  public_ip_address_id = azurerm_public_ip.nat[each.key].id
+}
