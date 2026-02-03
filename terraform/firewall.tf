@@ -59,3 +59,18 @@ resource "azurerm_network_security_rule" "node_health" {
   network_security_group_name                = azurerm_network_security_group.nodes.name
 }
 
+resource "azurerm_network_security_rule" "client" {
+  count                                      = length(var.client_cidrs) > 0 ? 1 : 0
+  name                                       = "client"
+  priority                                   = 200
+  direction                                  = "Inbound"
+  access                                     = "Allow"
+  protocol                                   = "Tcp"
+  source_port_range                          = "*"
+  destination_port_range                     = "9092"
+  source_address_prefixes                    = sort(tolist(var.client_cidrs))
+  destination_application_security_group_ids = [azurerm_application_security_group.role["broker"].id]
+  resource_group_name                        = azurerm_resource_group.kafka.name
+  network_security_group_name                = azurerm_network_security_group.nodes.name
+}
+
