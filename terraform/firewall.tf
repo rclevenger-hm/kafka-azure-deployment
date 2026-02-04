@@ -89,3 +89,18 @@ resource "azurerm_network_security_rule" "metrics" {
   network_security_group_name = azurerm_network_security_group.nodes.name
 }
 
+resource "azurerm_network_security_rule" "admin" {
+  count                       = length(var.admin_cidrs) > 0 ? 1 : 0
+  name                        = "admin"
+  priority                    = 220
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "22"
+  source_address_prefixes     = sort(tolist(var.admin_cidrs))
+  destination_address_prefix  = var.vnet_cidr
+  resource_group_name         = azurerm_resource_group.kafka.name
+  network_security_group_name = azurerm_network_security_group.nodes.name
+}
+
