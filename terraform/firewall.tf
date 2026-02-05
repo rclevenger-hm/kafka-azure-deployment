@@ -104,3 +104,17 @@ resource "azurerm_network_security_rule" "admin" {
   network_security_group_name = azurerm_network_security_group.nodes.name
 }
 
+resource "azurerm_network_security_rule" "deny_inbound" {
+  name                        = "deny-inbound"
+  priority                    = 4000
+  direction                   = "Inbound"
+  access                      = "Deny"
+  protocol                    = "*"
+  source_port_range           = "*"
+  destination_port_range      = "*"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = azurerm_resource_group.kafka.name
+  network_security_group_name = azurerm_network_security_group.nodes.name
+}
+
