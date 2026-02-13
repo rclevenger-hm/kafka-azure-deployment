@@ -22,3 +22,28 @@ resource "azurerm_virtual_machine_data_disk_attachment" "data" {
   caching            = "None"
 }
 resource "random_id" "storage" { byte_length = 5 }
+resource "azurerm_storage_account" "runtime" {
+  name                            = "kafkaruntime${random_id.storage.hex}"
+  resource_group_name             = azurerm_resource_group.kafka.name
+  location                        = var.region
+  account_tier                    = "Standard"
+  account_replication_type        = "ZRS"
+  min_tls_version                 = "TLS1_2"
+  https_traffic_only_enabled      = true
+  shared_access_key_enabled       = false
+  default_to_oauth_authentication = true
+  allow_nested_items_to_be_public = false
+  public_network_access           = "Enabled"
+  network_rules {
+    default_action             = "Deny"
+    bypass                     = ["None"]
+    virtual_network_subnet_ids = [var.deployment_subnet_id]
+  }
+  blob_properties {
+    versioning_enabled = true
+    delete_retention_policy { days = 30 }
+    container_delete_retention_policy { days = 30 }
+  }
+  tags = local.tags
+  lifecycle { prevent_destroy = true }
+}
