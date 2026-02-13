@@ -21,3 +21,4 @@ resource "azurerm_virtual_machine_data_disk_attachment" "data" {
   lun                = 0
   caching            = "None"
 }
+resource "random_id" "storage" { byte_length = 5 }
