@@ -14,3 +14,10 @@ resource "azurerm_managed_disk" "data" {
   tags                          = merge(local.tags, { Role = each.value.role })
   lifecycle { prevent_destroy = true }
 }
+resource "azurerm_virtual_machine_data_disk_attachment" "data" {
+  for_each           = local.nodes
+  managed_disk_id    = azurerm_managed_disk.data[each.key].id
+  virtual_machine_id = azurerm_linux_virtual_machine.node[each.key].id
+  lun                = 0
+  caching            = "None"
+}
