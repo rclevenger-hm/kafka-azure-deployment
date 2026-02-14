@@ -47,3 +47,9 @@ resource "azurerm_storage_account" "runtime" {
   tags = local.tags
   lifecycle { prevent_destroy = true }
 }
+resource "azurerm_storage_container" "runtime" {
+  for_each              = local.nodes
+  name                  = each.key
+  storage_account_id    = azurerm_storage_account.runtime.id
+  container_access_type = "private"
+}
