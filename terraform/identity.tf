@@ -8,3 +8,10 @@ data "azurerm_key_vault" "tls" {
     }
   }
 }
+resource "azurerm_user_assigned_identity" "node" {
+  for_each            = local.nodes
+  name                = each.key
+  location            = var.region
+  resource_group_name = azurerm_resource_group.kafka.name
+  tags                = local.tags
+}
