@@ -22,3 +22,10 @@ resource "azurerm_role_assignment" "secret" {
   principal_id         = azurerm_user_assigned_identity.node[each.key].principal_id
   principal_type       = "ServicePrincipal"
 }
+resource "azurerm_role_assignment" "runtime" {
+  for_each             = local.nodes
+  scope                = "${azurerm_storage_account.runtime.id}/blobServices/default/containers/${azurerm_storage_container.runtime[each.key].name}"
+  role_definition_name = "Storage Blob Data Reader"
+  principal_id         = azurerm_user_assigned_identity.node[each.key].principal_id
+  principal_type       = "ServicePrincipal"
+}
