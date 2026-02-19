@@ -29,3 +29,8 @@ resource "azurerm_role_assignment" "runtime" {
   principal_id         = azurerm_user_assigned_identity.node[each.key].principal_id
   principal_type       = "ServicePrincipal"
 }
+resource "azurerm_role_assignment" "deployer_runtime" {
+  scope                = azurerm_storage_account.runtime.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = data.azurerm_client_config.current.object_id
+}
