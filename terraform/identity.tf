@@ -15,3 +15,10 @@ resource "azurerm_user_assigned_identity" "node" {
   resource_group_name = azurerm_resource_group.kafka.name
   tags                = local.tags
 }
+resource "azurerm_role_assignment" "secret" {
+  for_each             = local.nodes
+  scope                = "${data.azurerm_key_vault.tls.id}/secrets/${try(var.tls_secrets[each.key].name, "MISSING")}"
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = azurerm_user_assigned_identity.node[each.key].principal_id
+  principal_type       = "ServicePrincipal"
+}
