@@ -10,3 +10,11 @@ resource "azurerm_private_dns_zone_virtual_network_link" "kafka" {
   virtual_network_id    = azurerm_virtual_network.kafka.id
   registration_enabled  = false
 }
+resource "azurerm_private_dns_a_record" "node" {
+  for_each            = local.nodes
+  name                = each.key
+  zone_name           = azurerm_private_dns_zone.kafka.name
+  resource_group_name = azurerm_resource_group.kafka.name
+  ttl                 = 60
+  records             = [cidrhost(azurerm_subnet.nodes[each.value.zone].address_prefixes[0], each.value.host)]
+}
