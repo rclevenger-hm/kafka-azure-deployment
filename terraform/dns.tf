@@ -24,3 +24,11 @@ resource "azurerm_private_dns_zone" "service" {
   resource_group_name = azurerm_resource_group.kafka.name
   tags                = local.tags
 }
+resource "azurerm_private_dns_zone_virtual_network_link" "service" {
+  for_each              = azurerm_private_dns_zone.service
+  name                  = "${var.name_prefix}-${each.key}"
+  resource_group_name   = azurerm_resource_group.kafka.name
+  private_dns_zone_name = each.value.name
+  virtual_network_id    = azurerm_virtual_network.kafka.id
+  registration_enabled  = false
+}
