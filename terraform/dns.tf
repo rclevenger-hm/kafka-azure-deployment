@@ -18,3 +18,9 @@ resource "azurerm_private_dns_a_record" "node" {
   ttl                 = 60
   records             = [cidrhost(azurerm_subnet.nodes[each.value.zone].address_prefixes[0], each.value.host)]
 }
+resource "azurerm_private_dns_zone" "service" {
+  for_each            = { blob = "privatelink.blob.core.windows.net", vault = "privatelink.vaultcore.azure.net" }
+  name                = each.value
+  resource_group_name = azurerm_resource_group.kafka.name
+  tags                = local.tags
+}
