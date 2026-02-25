@@ -32,3 +32,21 @@ resource "azurerm_private_dns_zone_virtual_network_link" "service" {
   virtual_network_id    = azurerm_virtual_network.kafka.id
   registration_enabled  = false
 }
+resource "azurerm_private_endpoint" "service" {
+  for_each            = { blob = azurerm_storage_account.runtime.id, vault = data.azurerm_key_vault.tls.id }
+  name                = "${var.name_prefix}-${each.key}"
+  location            = var.region
+  resource_group_name = azurerm_resource_group.kafka.name
+  subnet_id           = azurerm_subnet.endpoints.id
+  private_service_connection {
+    name                           = "${var.name_prefix}-${each.key}"
+    private_connection_resource_id = each.value
+    subresource_names              = [each.key]
+    is_manual_connection           = false
+  }
+  private_dns_zone_group {
+    name                 = "service"
+    private_dns_zone_ids = [azurerm_private_dns_zone.service[each.key].id]
+  }
+  tags = local.tags
+}
