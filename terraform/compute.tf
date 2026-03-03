@@ -13,3 +13,8 @@ resource "azurerm_network_interface" "node" {
   }
   tags = local.tags
 }
+resource "azurerm_network_interface_application_security_group_association" "node" {
+  for_each                      = local.nodes
+  network_interface_id          = azurerm_network_interface.node[each.key].id
+  application_security_group_id = azurerm_application_security_group.role[each.value.role].id
+}
