@@ -20,3 +20,21 @@ resource "azurerm_monitor_metric_alert" "availability" {
   }
   tags = local.tags
 }
+resource "azurerm_storage_account" "flow" {
+  count                           = var.enable_flow_logs ? 1 : 0
+  name                            = "kafkaflow${random_id.storage.hex}"
+  resource_group_name             = azurerm_resource_group.kafka.name
+  location                        = var.region
+  account_tier                    = "Standard"
+  account_replication_type        = "LRS"
+  min_tls_version                 = "TLS1_2"
+  https_traffic_only_enabled      = true
+  allow_nested_items_to_be_public = false
+  public_network_access           = "Enabled"
+  network_rules {
+    default_action             = "Deny"
+    bypass                     = ["AzureServices"]
+    virtual_network_subnet_ids = [var.deployment_subnet_id]
+  }
+  tags = local.tags
+}
