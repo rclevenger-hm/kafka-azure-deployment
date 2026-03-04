@@ -38,3 +38,19 @@ resource "azurerm_storage_account" "flow" {
   }
   tags = local.tags
 }
+resource "azurerm_network_watcher_flow_log" "kafka" {
+  count                = var.enable_flow_logs ? 1 : 0
+  name                 = "${var.name_prefix}-vnet-flow"
+  network_watcher_name = var.network_watcher_name
+  resource_group_name  = var.network_watcher_resource_group
+  location             = var.region
+  target_resource_id   = azurerm_virtual_network.kafka.id
+  storage_account_id   = azurerm_storage_account.flow[0].id
+  enabled              = true
+  version              = 2
+  retention_policy {
+    enabled = true
+    days    = var.log_retention_days
+  }
+  tags = local.tags
+}
