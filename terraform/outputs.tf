@@ -14,3 +14,4 @@ output "nodes" {
   } }
 }
 output "runtime_storage_account" { value = azurerm_storage_account.runtime.name }
+output "egress_addresses" { value = { for zone, ip in azurerm_public_ip.nat : zone => ip.ip_address } }
