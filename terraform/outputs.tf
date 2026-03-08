@@ -13,3 +13,4 @@ output "nodes" {
     runtime_url        = "${azurerm_storage_account.runtime.primary_blob_endpoint}${name}/runtime.json"
   } }
 }
+output "runtime_storage_account" { value = azurerm_storage_account.runtime.name }
