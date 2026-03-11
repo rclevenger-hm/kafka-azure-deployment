@@ -17,3 +17,9 @@ Terraform >=1.12 and <2, tested with 1.13.5. AzureRM ~>5.8.0 and random ~>3.7 ar
 
 See [example inputs](terraform.tfvars.example) and [deployment prerequisites](../docs/deployment.md). `variables.tf` is the full validation contract. Never place PEM bundles or private keys in Terraform.
 
+## Defaults and optional controls
+
+Region eastus, zones 1/2/3, VNet 10.42.0.0/16, name prefix kafka, private DNS kafka.internal, three D4s_v5 brokers and three D2s_v5 controllers. Broker count supports integer 3–18. Controllers remain exactly three. Dedicated Premium SSD v2 disks default to 500 GiB per broker and 50 GiB per controller; broker IOPS and throughput are configurable within capacity/performance limits. Kafka defaults to pinned 4.3.1 with its SHA512.
+
+Client, metrics and SSH allowlists default empty and accept bounded private IPv4 CIDRs. NSGs explicitly deny unmatched VNet traffic. Flow logs default on and require the existing regional Network Watcher. `action_group_ids` connects VM availability alerts to existing notification groups. Empty groups mean no notification delivery.
+
