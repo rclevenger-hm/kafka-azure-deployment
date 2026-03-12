@@ -23,3 +23,9 @@ Region eastus, zones 1/2/3, VNet 10.42.0.0/16, name prefix kafka, private DNS ka
 
 Client, metrics and SSH allowlists default empty and accept bounded private IPv4 CIDRs. NSGs explicitly deny unmatched VNet traffic. Flow logs default on and require the existing regional Network Watcher. `action_group_ids` connects VM availability alerts to existing notification groups. Empty groups mean no notification delivery.
 
+## Outputs and lifecycle
+
+Outputs expose the resource group, VNet, bootstrap brokers, controller endpoints, cluster ID, node identities/disks/runtime URLs, runtime account and zonal NAT IPs. There are no secret outputs. Protect state even when outputs are nonsecret.
+
+VMs, managed data disks, runtime account and resource group use `prevent_destroy`. Runtime source/config changes normally update Blob manifests without restarting VMs. Initial loader/image/VM changes may require replacement and must follow a one-node maintenance plan. Do not remove all destruction guards to satisfy a plan.
+
