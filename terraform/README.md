@@ -29,3 +29,6 @@ Outputs expose the resource group, VNet, bootstrap brokers, controller endpoints
 
 VMs, managed data disks, runtime account and resource group use `prevent_destroy`. Runtime source/config changes normally update Blob manifests without restarting VMs. Initial loader/image/VM changes may require replacement and must follow a one-node maintenance plan. Do not remove all destruction guards to satisfy a plan.
 
+## Network and authentication
+
+Nodes use managed identity and private endpoints for Blob/Key Vault. Runtime storage's public endpoint is enabled only through a firewall allowlist for the deployment subnet; shared keys and anonymous blob access are disabled. The flow-log account permits Azure services for Network Watcher delivery. Existing state/vault administration network paths must work before apply. The module does not create the management network, runner, organizational CA or existing Network Watcher.
