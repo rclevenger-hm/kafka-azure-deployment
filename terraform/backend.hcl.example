@@ -1,0 +1,6 @@
+resource_group_name = "terraform-state-rg"
+storage_account_name = "yourprotectedstateaccount"
+container_name = "tfstate"
+key = "kafka-azure/dev.tfstate"
+use_azuread_auth = true
+use_oidc = true
