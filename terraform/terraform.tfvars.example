@@ -1,0 +1,25 @@
+subscription_id = "00000000-0000-0000-0000-000000000000"
+name_prefix = "kafka"
+region = "eastus"
+zones = ["1", "2", "3"]
+# Resolve a real Canonical:ubuntu-24_04-lts:server version available in this region.
+ubuntu_image_version = "0.0.0"
+admin_ssh_public_key = "ssh-ed25519 REPLACE_WITH_YOUR_PUBLIC_KEY"
+deployment_subnet_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/management/providers/Microsoft.Network/virtualNetworks/management/subnets/deployment"
+key_vault_name = "your-kafka-tls"
+key_vault_resource_group = "security-rg"
+client_cidrs = ["10.60.0.0/24"]
+metrics_cidrs = ["10.60.1.0/24"]
+admin_cidrs = []
+network_watcher_name = "NetworkWatcher_eastus"
+network_watcher_resource_group = "NetworkWatcherRG"
+action_group_ids = []
+tls_secrets = {
+  kafka-controller-1 = { name = "kafka-controller-1", version = "REPLACE_WITH_32_HEX_VERSION" }
+  kafka-controller-2 = { name = "kafka-controller-2", version = "REPLACE_WITH_32_HEX_VERSION" }
+  kafka-controller-3 = { name = "kafka-controller-3", version = "REPLACE_WITH_32_HEX_VERSION" }
+  kafka-broker-1 = { name = "kafka-broker-1", version = "REPLACE_WITH_32_HEX_VERSION" }
+  kafka-broker-2 = { name = "kafka-broker-2", version = "REPLACE_WITH_32_HEX_VERSION" }
+  kafka-broker-3 = { name = "kafka-broker-3", version = "REPLACE_WITH_32_HEX_VERSION" }
+}
+tags = { Owner = "platform", Environment = "dev" }
