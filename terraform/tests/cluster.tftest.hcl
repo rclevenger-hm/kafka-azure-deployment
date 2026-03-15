@@ -38,3 +38,43 @@ variables {
   }
 }
 
+run "private_topology" {
+  command = plan
+  assert {
+    condition     = length(azurerm_linux_virtual_machine.node) == 6 && length(azurerm_managed_disk.data) == 6
+    error_message = "Six separate compute and data disk identities required."
+  }
+  assert {
+    condition     = length(toset([for n in local.controllers : n.zone])) == 3 && length(azurerm_nat_gateway.egress) == 3
+    error_message = "Controllers and egress must span three zones."
+  }
+  assert {
+    condition     = alltrue([for nic in azurerm_network_interface.node : nic.ip_configuration[0].public_ip_address_id == null])
+    error_message = "Nodes must not have public IP addresses."
+  }
+  assert {
+    condition     = alltrue([for subnet in azurerm_subnet.nodes : !subnet.default_outbound_access_enabled])
+    error_message = "Require explicit NAT instead of implicit outbound access."
+  }
+  assert {
+    condition     = length(azurerm_network_security_rule.client) == 0 && length(azurerm_network_security_rule.metrics) == 0 && length(azurerm_network_security_rule.admin) == 0
+    error_message = "Ingress allowlists must default closed."
+  }
+  assert {
+    condition     = azurerm_network_security_rule.deny_inbound.access == "Deny" && azurerm_network_security_rule.deny_inbound.priority < 65000
+    error_message = "Override Azure default VNet inbound allow."
+  }
+  assert {
+    condition     = alltrue([for vm in azurerm_linux_virtual_machine.node : vm.secure_boot_enabled && vm.vtpm_enabled && vm.disable_password_authentication && vm.disk_controller_type == "SCSI"])
+    error_message = "Require Trusted Launch, key authentication and the supported disk controller."
+  }
+  assert {
+    condition     = alltrue([for vm in azurerm_linux_virtual_machine.node : length(base64decode(vm.custom_data)) < 65536])
+    error_message = "Custom data must remain within 64 KiB."
+  }
+  assert {
+    condition     = alltrue([for vm in azurerm_linux_virtual_machine.node : vm.source_image_reference[0].version == var.ubuntu_image_version])
+    error_message = "Pin the reviewed OS image."
+  }
+}
+
