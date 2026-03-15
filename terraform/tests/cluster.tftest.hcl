@@ -17,3 +17,7 @@ mock_provider "azurerm" {
   mock_resource "azurerm_storage_container" { defaults = { id = "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/kafka/providers/Microsoft.Storage/storageAccounts/kafkaruntime123/blobServices/default/containers/kafka-node" } }
   mock_resource "azurerm_private_dns_zone" { defaults = { id = "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/kafka/providers/Microsoft.Network/privateDnsZones/kafka.internal" } }
 }
+mock_provider "random" {
+  override_during = plan
+  mock_resource "random_id" { defaults = { b64_url = "AAAAAAAAAAAAAAAAAAAAAA", hex = "0123456789" } }
+}
