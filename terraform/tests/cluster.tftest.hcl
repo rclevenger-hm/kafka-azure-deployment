@@ -21,3 +21,20 @@ mock_provider "random" {
   override_during = plan
   mock_resource "random_id" { defaults = { b64_url = "AAAAAAAAAAAAAAAAAAAAAA", hex = "0123456789" } }
 }
+variables {
+  subscription_id          = "00000000-0000-0000-0000-000000000001"
+  ubuntu_image_version     = "24.04.202609240"
+  admin_ssh_public_key     = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMysCxS3k50rb2Of0Pk4XPKoz4zIbdSDw04Tlja8CfGn root@51820b8b5f08"
+  deployment_subnet_id     = "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/kafka/providers/Microsoft.Network/virtualNetworks/management/subnets/deployment"
+  key_vault_name           = "kafka-tls"
+  key_vault_resource_group = "security-rg"
+  tls_secrets = {
+    kafka-controller-1 = { name = "kafka-controller-1", version = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }
+    kafka-controller-2 = { name = "kafka-controller-2", version = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }
+    kafka-controller-3 = { name = "kafka-controller-3", version = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }
+    kafka-broker-1     = { name = "kafka-broker-1", version = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }
+    kafka-broker-2     = { name = "kafka-broker-2", version = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }
+    kafka-broker-3     = { name = "kafka-broker-3", version = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }
+  }
+}
+
