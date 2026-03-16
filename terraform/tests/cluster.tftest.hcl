@@ -122,3 +122,16 @@ run "per_node_permissions" {
   }
 }
 
+run "explicit_client_and_admin_paths" {
+  command = plan
+  variables {
+    client_cidrs  = ["10.60.0.0/24"]
+    admin_cidrs   = ["10.61.0.0/24"]
+    metrics_cidrs = ["10.62.0.0/24"]
+  }
+  assert {
+    condition     = azurerm_network_security_rule.client[0].destination_port_range == "9092" && azurerm_network_security_rule.admin[0].destination_port_range == "22" && azurerm_network_security_rule.metrics[0].destination_port_range == "9404"
+    error_message = "Keep client, admin and metrics ports separate."
+  }
+}
+
