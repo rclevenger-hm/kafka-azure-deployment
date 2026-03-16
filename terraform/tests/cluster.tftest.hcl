@@ -102,3 +102,23 @@ run "storage_and_private_services" {
   }
 }
 
+run "per_node_permissions" {
+  command = plan
+  assert {
+    condition     = alltrue([for name, grant in azurerm_role_assignment.secret : endswith(grant.scope, "/secrets/${var.tls_secrets[name].name}") && grant.role_definition_name == "Key Vault Secrets User"])
+    error_message = "Each node may read only its own TLS secret."
+  }
+  assert {
+    condition     = alltrue([for name, grant in azurerm_role_assignment.runtime : endswith(grant.scope, "/containers/${name}") && grant.role_definition_name == "Storage Blob Data Reader"])
+    error_message = "Each node may read only its own manifest container."
+  }
+  assert {
+    condition     = alltrue([for name, blob in azurerm_storage_blob.node : endswith(jsondecode(blob.source_content).config.tls_secret_version, var.tls_secrets[name].version)])
+    error_message = "Pin every TLS secret version."
+  }
+  assert {
+    condition     = alltrue([for blob in azurerm_storage_blob.node : !strcontains(jsonencode(jsondecode(blob.source_content).config), "-----BEGIN")])
+    error_message = "TLS values must stay out of Terraform state."
+  }
+}
+
