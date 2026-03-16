@@ -78,3 +78,27 @@ run "private_topology" {
   }
 }
 
+run "storage_and_private_services" {
+  command = plan
+  assert {
+    condition     = alltrue([for name, disk in azurerm_managed_disk.data : disk.zone == local.nodes[name].zone && disk.storage_account_type == "PremiumV2_LRS" && disk.network_access_policy == "DenyAll" && !disk.public_network_access_enabled])
+    error_message = "Protect zonal data disks and disable disk export."
+  }
+  assert {
+    condition     = alltrue([for disk in azurerm_virtual_machine_data_disk_attachment.data : disk.lun == 0 && disk.caching == "None"])
+    error_message = "Use dedicated LUN zero without host caching."
+  }
+  assert {
+    condition     = !azurerm_storage_account.runtime.shared_access_key_enabled && !azurerm_storage_account.runtime.allow_nested_items_to_be_public && azurerm_storage_account.runtime.blob_properties[0].versioning_enabled
+    error_message = "Runtime artifacts require Entra access and versioning."
+  }
+  assert {
+    condition     = azurerm_storage_account.runtime.network_rules[0].default_action == "Deny" && length(azurerm_private_endpoint.service) == 2
+    error_message = "Limit runtime public endpoint to deployment subnet and provide private runtime/vault endpoints."
+  }
+  assert {
+    condition     = alltrue([for c in azurerm_storage_container.runtime : c.container_access_type == "private"])
+    error_message = "Runtime containers must remain private."
+  }
+}
+
