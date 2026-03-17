@@ -135,3 +135,15 @@ run "explicit_client_and_admin_paths" {
   }
 }
 
+run "custom_disk_performance" {
+  command = plan
+  variables {
+    broker_disk_iops       = 6000
+    broker_disk_throughput = 250
+  }
+  assert {
+    condition     = azurerm_managed_disk.data["kafka-broker-1"].disk_iops_read_write == 6000 && azurerm_managed_disk.data["kafka-broker-1"].disk_mbps_read_write == 250 && azurerm_managed_disk.data["kafka-controller-1"].disk_iops_read_write == 3000
+    error_message = "Broker disk tuning must remain separate from controller disks."
+  }
+}
+
