@@ -147,3 +147,15 @@ run "custom_disk_performance" {
   }
 }
 
+run "current_network_flow_logs" {
+  command = plan
+  assert {
+    condition     = azurerm_network_watcher_flow_log.kafka[0].target_resource_id == azurerm_virtual_network.kafka.id && azurerm_network_watcher_flow_log.kafka[0].version == 2
+    error_message = "Use VNet flow logs instead of retired NSG flow-log creation."
+  }
+  assert {
+    condition     = length(azurerm_monitor_metric_alert.availability) == 6
+    error_message = "Each VM requires an availability alert."
+  }
+}
+
