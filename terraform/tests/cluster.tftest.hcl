@@ -159,3 +159,14 @@ run "current_network_flow_logs" {
   }
 }
 
+run "flow_log_opt_out" {
+  command = plan
+  variables {
+    enable_flow_logs = false
+  }
+  assert {
+    condition     = length(azurerm_network_watcher_flow_log.kafka) == 0 && length(azurerm_storage_account.flow) == 0
+    error_message = "Opt out must remove both flow-log resources."
+  }
+}
+
