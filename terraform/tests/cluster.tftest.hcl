@@ -178,3 +178,11 @@ run "reject_public_clients" {
   expect_failures = [var.client_cidrs]
 }
 
+run "reject_public_metrics" {
+  command = plan
+  variables {
+    metrics_cidrs = ["8.8.8.0/24"]
+  }
+  expect_failures = [var.metrics_cidrs]
+}
+
