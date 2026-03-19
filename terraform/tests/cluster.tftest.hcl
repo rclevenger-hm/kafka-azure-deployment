@@ -186,3 +186,11 @@ run "reject_public_metrics" {
   expect_failures = [var.metrics_cidrs]
 }
 
+run "reject_public_admin" {
+  command = plan
+  variables {
+    admin_cidrs = ["0.0.0.0/0"]
+  }
+  expect_failures = [var.admin_cidrs]
+}
+
