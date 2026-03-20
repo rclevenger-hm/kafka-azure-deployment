@@ -194,3 +194,11 @@ run "reject_public_admin" {
   expect_failures = [var.admin_cidrs]
 }
 
+run "reject_broad_admin" {
+  command = plan
+  variables {
+    admin_cidrs = ["10.0.0.0/8"]
+  }
+  expect_failures = [var.admin_cidrs]
+}
+
