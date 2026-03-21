@@ -202,3 +202,11 @@ run "reject_broad_admin" {
   expect_failures = [var.admin_cidrs]
 }
 
+run "reject_public_vnet" {
+  command = plan
+  variables {
+    vnet_cidr = "8.8.0.0/16"
+  }
+  expect_failures = [var.vnet_cidr]
+}
+
