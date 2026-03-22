@@ -210,3 +210,11 @@ run "reject_public_vnet" {
   expect_failures = [var.vnet_cidr]
 }
 
+run "reject_small_vnet" {
+  command = plan
+  variables {
+    vnet_cidr = "10.0.0.0/28"
+  }
+  expect_failures = [var.vnet_cidr]
+}
+
