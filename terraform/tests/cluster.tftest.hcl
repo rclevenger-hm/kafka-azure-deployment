@@ -218,3 +218,11 @@ run "reject_small_vnet" {
   expect_failures = [var.vnet_cidr]
 }
 
+run "reject_ipv6" {
+  command = plan
+  variables {
+    vnet_cidr = "fd00::/64"
+  }
+  expect_failures = [var.vnet_cidr]
+}
+
