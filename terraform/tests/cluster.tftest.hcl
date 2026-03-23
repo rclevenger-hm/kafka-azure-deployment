@@ -226,3 +226,11 @@ run "reject_ipv6" {
   expect_failures = [var.vnet_cidr]
 }
 
+run "reject_few_brokers" {
+  command = plan
+  variables {
+    broker_count = 2
+  }
+  expect_failures = [var.broker_count]
+}
+
