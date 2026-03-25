@@ -250,3 +250,11 @@ run "reject_duplicate_zones" {
   expect_failures = [var.zones]
 }
 
+run "reject_mutable_image" {
+  command = plan
+  variables {
+    ubuntu_image_version = "latest"
+  }
+  expect_failures = [var.ubuntu_image_version]
+}
+
