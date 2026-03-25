@@ -242,3 +242,11 @@ run "reject_fractional_brokers" {
   expect_failures = [var.broker_count]
 }
 
+run "reject_duplicate_zones" {
+  command = plan
+  variables {
+    zones = ["1", "1", "3"]
+  }
+  expect_failures = [var.zones]
+}
+
