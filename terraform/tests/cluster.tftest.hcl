@@ -258,3 +258,11 @@ run "reject_mutable_image" {
   expect_failures = [var.ubuntu_image_version]
 }
 
+run "reject_unsupported_disk_controller" {
+  command = plan
+  variables {
+    broker_vm_size = "Standard_D4s_v6"
+  }
+  expect_failures = [var.broker_vm_size]
+}
+
