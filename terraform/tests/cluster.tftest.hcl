@@ -266,3 +266,11 @@ run "reject_unsupported_disk_controller" {
   expect_failures = [var.broker_vm_size]
 }
 
+run "reject_low_iops" {
+  command = plan
+  variables {
+    broker_disk_iops = 2999
+  }
+  expect_failures = [var.broker_disk_iops]
+}
+
