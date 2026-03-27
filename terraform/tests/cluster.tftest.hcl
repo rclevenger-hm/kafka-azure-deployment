@@ -282,3 +282,11 @@ run "reject_excessive_throughput" {
   expect_failures = [var.broker_disk_throughput]
 }
 
+run "reject_fractional_disk" {
+  command = plan
+  variables {
+    broker_disk_gb = 100.5
+  }
+  expect_failures = [var.broker_disk_gb]
+}
+
