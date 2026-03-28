@@ -290,3 +290,11 @@ run "reject_fractional_disk" {
   expect_failures = [var.broker_disk_gb]
 }
 
+run "reject_mutable_secret" {
+  command = plan
+  variables {
+    tls_secrets = { kafka = { name = "node", version = "latest" } }
+  }
+  expect_failures = [var.tls_secrets]
+}
+
