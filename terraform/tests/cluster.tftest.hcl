@@ -298,3 +298,10 @@ run "reject_mutable_secret" {
   expect_failures = [var.tls_secrets]
 }
 
+run "reject_missing_secrets" {
+  command = plan
+  variables {
+    tls_secrets = {}
+  }
+  expect_failures = [azurerm_storage_blob.node]
+}
