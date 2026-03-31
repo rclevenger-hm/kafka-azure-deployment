@@ -31,3 +31,14 @@ def request(url, headers=None, maximum=4 * 1024 * 1024, attempts=5):
             if not retryable or attempt == attempts - 1:
                 raise
             time.sleep(2 ** attempt)
+
+
+def token(client_id, resource):
+    if not re.fullmatch(UUID, client_id) or resource not in {'https://vault.azure.net', 'https://storage.azure.com/'}:
+        raise ValueError('Invalid managed identity or token audience')
+    query = urllib.parse.urlencode({'api-version': '2018-02-01', 'client_id': client_id, 'resource': resource})
+    raw, _ = request(IMDS + 'identity/oauth2/token?' + query, {'Metadata': 'true'}, maximum=65536)
+    result = json.loads(raw)
+    if not isinstance(result.get('access_token'), str) or not result['access_token']:
+        raise ValueError('Managed identity token missing')
+    return result['access_token']
