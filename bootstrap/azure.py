@@ -42,3 +42,17 @@ def token(client_id, resource):
     if not isinstance(result.get('access_token'), str) or not result['access_token']:
         raise ValueError('Managed identity token missing')
     return result['access_token']
+
+
+def secret_payload(version_url, client_id):
+    if not re.fullmatch(r'https://[a-z][a-z0-9-]{1,22}[a-z0-9]\.vault\.azure\.net/secrets/[A-Za-z0-9-]{1,127}/[a-f0-9]{32}', version_url):
+        raise ValueError('Use a public-cloud Key Vault secret URL with an immutable 32-hex version')
+    bearer = token(client_id, 'https://vault.azure.net')
+    raw, _ = request(version_url + '?api-version=7.4', {'Authorization': 'Bearer ' + bearer}, maximum=131072)
+    result = json.loads(raw)
+    if result.get('id', '').lower() != version_url.lower():
+        raise ValueError('Secret response differs from pinned identity')
+    value = json.loads(result['value'])
+    if not isinstance(value, dict):
+        raise ValueError('TLS bundle must be a JSON object')
+    return value
