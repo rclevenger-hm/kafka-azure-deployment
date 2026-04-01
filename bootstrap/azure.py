@@ -81,3 +81,14 @@ def disk_metadata():
     if not isinstance(value, list):
         raise ValueError('Invalid data-disk metadata')
     return value
+
+
+def verify_disk(disks, disk_id, lun):
+    if not isinstance(disk_id, str) or not re.fullmatch(DISK_ID, disk_id, re.IGNORECASE) or type(lun) is not int or not 0 <= lun <= 63:
+        raise ValueError('Invalid managed disk identity or LUN')
+    matches = [disk for disk in disks if str(disk.get('lun')) == str(lun)]
+    if not matches:
+        return False
+    if len(matches) != 1 or matches[0].get('managedDisk', {}).get('id', '').lower() != disk_id.lower():
+        raise ValueError('Data LUN is attached to a different or ambiguous managed disk')
+    return True
