@@ -73,3 +73,11 @@ def runtime_manifest(blob_url, client_id, version_id=None):
     if not actual_version or (version_id and actual_version != version_id):
         raise ValueError('Missing or mismatched blob version')
     return json.loads(raw), actual_version
+
+
+def disk_metadata():
+    raw, _ = request(IMDS + 'instance/compute/storageProfile/dataDisks?api-version=2021-02-01', {'Metadata': 'true'}, maximum=65536, attempts=1)
+    value = json.loads(raw)
+    if not isinstance(value, list):
+        raise ValueError('Invalid data-disk metadata')
+    return value
