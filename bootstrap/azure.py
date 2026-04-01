@@ -56,3 +56,20 @@ def secret_payload(version_url, client_id):
     if not isinstance(value, dict):
         raise ValueError('TLS bundle must be a JSON object')
     return value
+
+
+def runtime_manifest(blob_url, client_id, version_id=None):
+    if not re.fullmatch(r'https://[a-z0-9]{3,24}\.blob\.core\.windows\.net/[a-z0-9][a-z0-9-]{1,61}[a-z0-9]/runtime\.json', blob_url):
+        raise ValueError('Invalid node runtime blob URL')
+    url = blob_url
+    if version_id is not None:
+        if not re.fullmatch(r'[0-9T:.Z-]{20,40}', version_id):
+            raise ValueError('Invalid immutable blob version')
+        url += '?' + urllib.parse.urlencode({'versionid': version_id})
+    bearer = token(client_id, 'https://storage.azure.com/')
+    raw, headers = request(url, {'Authorization': 'Bearer ' + bearer, 'x-ms-version': '2023-11-03'})
+    lower = {key.lower(): value for key, value in headers.items()}
+    actual_version = lower.get('x-ms-version-id')
+    if not actual_version or (version_id and actual_version != version_id):
+        raise ValueError('Missing or mismatched blob version')
+    return json.loads(raw), actual_version
