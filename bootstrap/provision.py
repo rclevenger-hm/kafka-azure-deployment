@@ -21,3 +21,5 @@ JMX_URL = "https://github.com/prometheus/jmx_exporter/releases/download/1.1.0/jm
 JMX_SHA256 = "2d158db7a4cd2999f40ca30a2532bc8456ca3ecf37498cbe60a02a588bf3c9f1"
 
 
+def run(*args, **kwargs):
+    return subprocess.run(args, check=True, text=True, timeout=300, **kwargs)
