@@ -131,3 +131,15 @@ def download_verified(url, destination, expected, algorithm="sha512"):
         os.replace(temp, destination)
     finally:
         temp.unlink(missing_ok=True)
+
+
+
+def download_kafka(version, destination, expected):
+    """Use the release CDN, falling back only when a release has been archived."""
+    artifact = f"kafka_2.13-{version}.tgz"
+    try:
+        download_verified(f"https://dlcdn.apache.org/kafka/{version}/{artifact}", destination, expected)
+    except urllib.error.HTTPError as error:
+        if error.code not in (404, 410):
+            raise
+        download_verified(f"https://archive.apache.org/dist/kafka/{version}/{artifact}", destination, expected)
