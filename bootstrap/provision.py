@@ -153,3 +153,17 @@ def extract_verified(archive, destination):
             if not target.is_relative_to(base) or not (member.isfile() or member.isdir()):
                 raise ValueError("Unsafe archive member")
         tar.extractall(destination)  # all paths and types checked above
+
+
+def select_data_device(blocks, resolved):
+    """Accept only the Azure LUN symlink's dedicated SCSI disk, never OS/temp disks."""
+    if not re.fullmatch(r"/dev/sd[a-z]+", str(resolved)):
+        raise ValueError("Expected an Azure SCSI data disk; NVMe requires a different implementation")
+    matches = [b for b in blocks if b.get("name") == str(resolved)]
+    if len(matches) != 1:
+        raise ValueError("Missing or ambiguous data device")
+    disk = matches[0]
+    mounts = disk.get("mountpoints") or [disk.get("mountpoint")]
+    if disk.get("type") != "disk" or disk.get("children") or any(m not in (None, "", "/var/lib/kafka") for m in mounts):
+        raise ValueError("Refusing partitioned, OS, temporary, or foreign-mounted disk")
+    return Path(resolved)
