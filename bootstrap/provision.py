@@ -228,3 +228,73 @@ def install_tls(bundle, config, directory):
             raise ValueError("Use an unencrypted PKCS8 private key")
     atomic_write(directory / "node.pem", bundle["private_key"].strip() + "\n" + bundle["certificate"].strip() + "\n", 0o600)
     atomic_write(directory / "ca.pem", bundle["ca"], 0o600)
+
+
+def provision(config_path, allow_change=False):
+    c = json.loads(Path(config_path).read_text())
+    validate_config(c)
+    state = Path("/var/lib/kafka-runtime.json")
+    runtime = Path(__file__).parent
+    fingerprint = hashlib.sha256(json.dumps({"config": c, "files": {p.name: p.read_text() for p in runtime.iterdir() if p.name in {"provision.py", "azure.py", "kafka.service", "kafka.env", "jmx.yml"}}}, sort_keys=True).encode()).hexdigest()
+    if state.exists() and json.loads(state.read_text())["fingerprint"] != fingerprint and not allow_change:
+        raise RuntimeError("Runtime change pending. Follow the rolling-change runbook and use --apply-change on one healthy node at a time.")
+    # An unchanged healthy refresh must not trigger an unnecessary restart.
+    if state.exists() and json.loads(state.read_text())["fingerprint"] == fingerprint:
+        active = subprocess.run(["systemctl", "is-active", "--quiet", "kafka.service"], timeout=15, capture_output=True)
+        if active.returncode == 0:
+            print("Runtime already applied and Kafka process active; use health checks for readiness.")
+            return
+    # Fail secret access before changing local services or packages.
+    bundle = azure.secret_payload(c["tls_secret_version"], c["identity_client_id"])
+    run("apt-get", "update", "-qq")
+    run("apt-get", "install", "-y", "--no-install-recommends", "openjdk-17-jre-headless", "openssl", "e2fsprogs", "util-linux", "ca-certificates")
+    atomic_write("/etc/apt/apt.conf.d/52kafka-no-reboots", 'Unattended-Upgrade::Automatic-Reboot "false";\n', 0o644)
+    try:
+        pwd.getpwnam("kafka")
+    except KeyError:
+        run("useradd", "--system", "--home-dir", "/var/lib/kafka", "--shell", "/usr/sbin/nologin", "kafka")
+    root = mount_data(c["data_disk_id"], c["data_lun"])
+    formatted = verify_identity(root, c["cluster_id"], c["node_id"])
+    artifact_name = "kafka_2.13-" + c["kafka_version"]
+    target = Path("/opt/" + artifact_name + "-" + c["kafka_sha512"][:12])
+    archive = Path("/var/cache/kafka_2.13-" + c["kafka_version"] + ".tgz")
+    download_kafka(c["kafka_version"], archive, c["kafka_sha512"])
+    if not (target / ".verified").exists() or (target / ".verified").read_text().strip() != c["kafka_sha512"]:
+        with tempfile.TemporaryDirectory(dir="/opt") as staging:
+            extract_verified(archive, staging)
+            if target.exists():
+                raise ValueError("Existing binary directory has no matching verified marker; operator recovery required")
+            shutil.move(str(Path(staging) / artifact_name), target)
+            atomic_write(target / ".verified", c["kafka_sha512"], 0o644)
+    download_verified(JMX_URL, "/opt/kafka-jmx.jar", JMX_SHA256, "sha256")
+    with tempfile.TemporaryDirectory() as tls_check:
+        install_tls(bundle, c, tls_check)
+    # Stop only after all artifact, certificate and identity checks have succeeded.
+    subprocess.run(["systemctl", "stop", "kafka.service"], check=False, timeout=180, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    install_tls(bundle, c, "/etc/kafka/tls")
+    link = Path("/opt/kafka.next")
+    link.unlink(missing_ok=True)
+    link.symlink_to(target)
+    os.replace(link, "/opt/kafka")
+    atomic_write("/etc/kafka/server.properties", render_properties(c))
+    env = (runtime / "kafka.env").read_text()
+    if c["role"] == "controller":
+        env = env.replace("2g", "1g")
+    atomic_write("/etc/kafka/kafka.env", env)
+    atomic_write("/etc/kafka/jmx.yml", (runtime / "jmx.yml").read_text())
+    atomic_write("/etc/systemd/system/kafka.service", (runtime / "kafka.service").read_text(), 0o644)
+    for path in (root / "data", root / "metadata", Path("/var/log/kafka")):
+        path.mkdir(parents=True, exist_ok=True)
+    run("chown", "-R", "kafka:kafka", "/etc/kafka")
+    account = pwd.getpwnam("kafka")
+    for path in (root, root / "data", root / "metadata", Path("/var/log/kafka")):
+        os.chown(path, account.pw_uid, account.pw_gid)
+    if not formatted:
+        command = ["runuser", "-u", "kafka", "--", "/opt/kafka/bin/kafka-storage.sh", "format", "--cluster-id", c["cluster_id"], "--config", "/etc/kafka/server.properties"]
+        command += ["--initial-controllers", c["initial_controllers"]] if c["role"] == "controller" else ["--no-initial-controllers"]
+        run(*command)
+    run("systemctl", "daemon-reload")
+    run("systemctl", "enable", "--now", "kafka.service")
+    run("systemctl", "is-active", "--quiet", "kafka.service")
+    atomic_write(state, json.dumps({"fingerprint": fingerprint, "cluster_id": c["cluster_id"], "node_id": c["node_id"]}) + "\n", 0o600)
+    print("Kafka process started. Verify quorum and replicated produce/consume before accepting traffic.")
