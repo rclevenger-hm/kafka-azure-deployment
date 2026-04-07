@@ -167,3 +167,40 @@ def select_data_device(blocks, resolved):
     if disk.get("type") != "disk" or disk.get("children") or any(m not in (None, "", "/var/lib/kafka") for m in mounts):
         raise ValueError("Refusing partitioned, OS, temporary, or foreign-mounted disk")
     return Path(resolved)
+
+
+def mount_data(disk_id, lun):
+    link = Path(f"/dev/disk/azure/scsi1/lun{lun}")
+    for _ in range(60):
+        if azure.verify_disk(azure.disk_metadata(), disk_id, lun) and link.is_block_device():
+            blocks = json.loads(run("lsblk", "--json", "--paths", "--output", "NAME,TYPE,MOUNTPOINTS", capture_output=True).stdout)["blockdevices"]
+            device = select_data_device(blocks, str(link.resolve()))
+            break
+        time.sleep(5)
+    else:
+        raise RuntimeError("Expected managed data disk did not attach within five minutes")
+    signatures = json.loads(run("wipefs", "--json", str(device), capture_output=True).stdout)["signatures"]
+    if not signatures:
+        run("mkfs.ext4", "-m", "0", str(device))
+    fs = run("blkid", "-s", "TYPE", "-o", "value", str(device), capture_output=True).stdout.strip()
+    if fs != "ext4":
+        raise ValueError("Expected ext4; refusing to reformat an existing filesystem")
+    uuid = run("blkid", "-s", "UUID", "-o", "value", str(device), capture_output=True).stdout.strip()
+    mount = Path("/var/lib/kafka")
+    mount.mkdir(exist_ok=True)
+    fstab = Path("/etc/fstab")
+    lines = fstab.read_text().splitlines()
+    entries = [line for line in lines if not line.lstrip().startswith("#") and len(line.split()) > 1 and line.split()[1] == str(mount)]
+    if entries and not all(line.split()[0] == "UUID=" + uuid for line in entries):
+        raise ValueError("Conflicting data disk mount in fstab")
+    if not entries:
+        atomic_write(fstab, "\n".join(lines) + f"\nUUID={uuid} {mount} ext4 defaults,noatime 0 2\n", 0o644)
+    if os.path.ismount(mount):
+        actual = run("findmnt", "-n", "-o", "UUID", "--target", str(mount), capture_output=True).stdout.strip()
+        if actual != uuid:
+            raise ValueError("Wrong filesystem mounted at Kafka data path")
+    else:
+        if any(mount.iterdir()):
+            raise ValueError("Refusing to hide existing files beneath the data mount")
+        run("mount", str(mount))
+    return mount
