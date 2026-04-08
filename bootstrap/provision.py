@@ -308,3 +308,7 @@ def main():
     if os.geteuid() != 0:
         parser.error("Provisioning requires root on a dedicated Azure VM")
     provision(args.config, args.apply_change)
+
+
+if __name__ == "__main__":
+    main()
