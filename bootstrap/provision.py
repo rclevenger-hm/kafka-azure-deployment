@@ -298,3 +298,13 @@ def provision(config_path, allow_change=False):
     run("systemctl", "is-active", "--quiet", "kafka.service")
     atomic_write(state, json.dumps({"fingerprint": fingerprint, "cluster_id": c["cluster_id"], "node_id": c["node_id"]}) + "\n", 0o600)
     print("Kafka process started. Verify quorum and replicated produce/consume before accepting traffic.")
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--config", required=True)
+    parser.add_argument("--apply-change", action="store_true")
+    args = parser.parse_args()
+    if os.geteuid() != 0:
+        parser.error("Provisioning requires root on a dedicated Azure VM")
+    provision(args.config, args.apply_change)
