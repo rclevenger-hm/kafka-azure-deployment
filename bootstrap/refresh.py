@@ -48,3 +48,14 @@ def refresh(allow_change=False, version_id=None):
                 shutil.copyfile(stage / name, active / name)
                 os.chmod(active / name, 0o600)
             (active / "blob-version.txt").write_text(actual_version + "\n")
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--apply-change", action="store_true")
+    parser.add_argument("--version-id", help="Optional recorded Azure blob version for controlled rollback")
+    args = parser.parse_args()
+    if os.geteuid() != 0:
+        parser.error("Run as root through an authorized administrative session")
+    os.umask(0o077)
+    refresh(args.apply_change, args.version_id)
