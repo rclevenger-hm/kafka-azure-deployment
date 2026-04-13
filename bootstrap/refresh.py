@@ -59,3 +59,7 @@ def main():
         parser.error("Run as root through an authorized administrative session")
     os.umask(0o077)
     refresh(args.apply_change, args.version_id)
+
+
+if __name__ == "__main__":
+    main()
