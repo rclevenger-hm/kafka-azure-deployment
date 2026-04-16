@@ -36,3 +36,26 @@ def build_command(resource_group, node, action, apply_change=False, version_id=N
     return ["az", "vm", "run-command", "invoke", "--resource-group", resource_group,
             "--name", node, "--command-id", "RunShellScript", "--scripts",
             guest_script(action, apply_change, version_id), "--output", "json"]
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--resource-group", required=True)
+    parser.add_argument("--node", required=True)
+    parser.add_argument("action", choices=("status", "refresh"))
+    parser.add_argument("--apply-change", action="store_true")
+    parser.add_argument("--version-id")
+    parser.add_argument("--execute", action="store_true", help="Execute a refresh; otherwise print its command")
+    args = parser.parse_args(argv)
+    try:
+        command = build_command(args.resource_group, args.node, args.action, args.apply_change, args.version_id)
+    except ValueError as error:
+        parser.error(str(error))
+    if args.action == "refresh" and not args.execute:
+        print(json.dumps({"execute": False, "command": command, "gate": "Require external Kafka health before and after this single node"}, indent=2))
+        return
+    result = subprocess.run(command, capture_output=True, text=True, timeout=2400, check=True)
+    response = json.loads(result.stdout)
+    print(json.dumps(response, indent=2))
+    if args.action == "refresh" and not any("KAFKA_REFRESH_OK" in item.get("message", "") for item in response.get("value", [])):
+        raise SystemExit("Refresh success marker missing; inspect the node and do not continue the roll")
