@@ -26,3 +26,13 @@ def guest_script(action, apply_change=False, version_id=None):
             raise ValueError("Invalid immutable Blob version ID")
         command.extend(["--version-id", version_id])
     return "set -eu\n" + shlex.join(command) + "\nprintf 'KAFKA_REFRESH_OK\\n'\n"
+
+
+def build_command(resource_group, node, action, apply_change=False, version_id=None):
+    if not re.fullmatch(r"[A-Za-z0-9_().-]{1,90}", resource_group):
+        raise ValueError("Invalid resource group")
+    if not re.fullmatch(r"[a-z][a-z0-9-]{2,50}", node):
+        raise ValueError("Select exactly one valid Kafka node name")
+    return ["az", "vm", "run-command", "invoke", "--resource-group", resource_group,
+            "--name", node, "--command-id", "RunShellScript", "--scripts",
+            guest_script(action, apply_change, version_id), "--output", "json"]
