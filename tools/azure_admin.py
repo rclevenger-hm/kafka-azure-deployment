@@ -59,3 +59,7 @@ def main(argv=None):
     print(json.dumps(response, indent=2))
     if args.action == "refresh" and not any("KAFKA_REFRESH_OK" in item.get("message", "") for item in response.get("value", [])):
         raise SystemExit("Refresh success marker missing; inspect the node and do not continue the roll")
+
+
+if __name__ == "__main__":
+    main()
