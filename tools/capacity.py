@@ -23,3 +23,20 @@ def estimate(ingress_mib_s, retention_hours, brokers=3, replication=3, utilizati
         "can_restore_full_replication_without_replacement": surviving >= replication,
         "note": "Failure headroom assumes redistribution; RF3 with two survivors needs a replacement broker. Recovery bandwidth must be spare capacity.",
     }
+
+
+def main():
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--ingress-mib-s", type=float, required=True)
+    p.add_argument("--retention-hours", type=float, default=168)
+    p.add_argument("--brokers", type=int, default=3)
+    p.add_argument("--replication", type=int, default=3)
+    p.add_argument("--utilization", type=float, default=0.65)
+    p.add_argument("--lost-brokers", type=int, default=1)
+    p.add_argument("--overhead", type=float, default=1.2)
+    p.add_argument("--recovery-mib-s", type=float, default=50)
+    args = p.parse_args()
+    try:
+        print(json.dumps(estimate(**vars(args)), indent=2))
+    except ValueError as error:
+        p.error(str(error))
