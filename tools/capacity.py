@@ -40,3 +40,7 @@ def main():
         print(json.dumps(estimate(**vars(args)), indent=2))
     except ValueError as error:
         p.error(str(error))
+
+
+if __name__ == "__main__":
+    main()
