@@ -26,3 +26,5 @@ def main():
         if file.is_file() and "REPLACE_JMX_DIGEST" in file.read_text(): errors.append("Unpinned exporter digest")
     if errors: raise SystemExit("\n".join(errors))
     print("Repository syntax, local links and dashboard JSON passed")
+
+if __name__ == "__main__": main()
