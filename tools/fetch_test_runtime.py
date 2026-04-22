@@ -27,3 +27,6 @@ def main():
     provision.extract_verified(archive,args.out)
     provision.download_verified(provision.JMX_URL,args.out/"jmx.jar",provision.JMX_SHA256,"sha256")
     print(args.out/f"kafka_2.13-{version}")
+
+
+if __name__ == "__main__": main()
