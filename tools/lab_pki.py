@@ -8,3 +8,5 @@ import re
 import subprocess
 
 
+def run(*args):
+    subprocess.run(args, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, timeout=60)
