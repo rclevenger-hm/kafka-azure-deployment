@@ -58,3 +58,7 @@ def main():
             issue(args.out, name, f"{name}.{args.domain}")
     issue(args.out, "kafka-admin")
     print(f"Created 30-day lab PKI in {args.out}; protect the CA key and upload only each node JSON to its own secret.")
+
+
+if __name__ == "__main__":
+    main()
