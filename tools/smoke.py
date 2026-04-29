@@ -28,3 +28,12 @@ def smoke(kafka_home, bootstrap, config, timeout=90):
     finally:
         if created:
             call("kafka-topics.sh", "--command-config", str(config), "--delete", "--topic", topic)
+
+
+def main():
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--kafka-home", default="/opt/kafka")
+    p.add_argument("--bootstrap", required=True)
+    p.add_argument("--config", required=True, type=Path)
+    args = p.parse_args()
+    print(json.dumps(smoke(args.kafka_home, args.bootstrap, args.config), indent=2))
