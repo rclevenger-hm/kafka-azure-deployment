@@ -37,3 +37,7 @@ def main():
     p.add_argument("--config", required=True, type=Path)
     args = p.parse_args()
     print(json.dumps(smoke(args.kafka_home, args.bootstrap, args.config), indent=2))
+
+
+if __name__ == "__main__":
+    main()
