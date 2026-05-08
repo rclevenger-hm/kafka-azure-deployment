@@ -150,3 +150,7 @@ def main():
                 try: proc.wait(timeout=30)
                 except subprocess.TimeoutExpired: proc.kill(); proc.wait()
             for stream in streams: stream.close()
+
+
+if __name__ == "__main__":
+    main()
