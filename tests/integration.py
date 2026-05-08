@@ -16,3 +16,5 @@ health = load("tools/health.py", "health")
 smoke = load("tools/smoke.py", "smoke")
 
 
+def kafka_uuid():
+    return base64.urlsafe_b64encode(uuid.uuid4().bytes).decode().rstrip("=")
