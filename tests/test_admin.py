@@ -15,3 +15,9 @@ class AdminTests(unittest.TestCase):
         self.assertEqual(command[command.index("--name") + 1], "kafka-broker-1")
         self.assertNotIn("--apply-change", command[-3])
         self.assertIn("findmnt", command[-3])
+
+    def test_refresh_script_stops_on_error(self):
+        script = azure_admin.guest_script("refresh", True)
+        self.assertTrue(script.startswith("set -eu\n"))
+        self.assertIn("kafka-refresh --apply-change", script)
+        self.assertIn("KAFKA_REFRESH_OK", script)
