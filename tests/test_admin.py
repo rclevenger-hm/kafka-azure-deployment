@@ -25,3 +25,8 @@ class AdminTests(unittest.TestCase):
     def test_version_selected_explicitly(self):
         version = "2026-09-20T13:00:00.0000000Z"
         self.assertIn(version, azure_admin.guest_script("refresh", True, version))
+
+    def test_no_shell_injection(self):
+        for value in ("x; id", "$(id)", "a\nwhoami", "*", "broker-1 broker-2"):
+            with self.subTest(value=value):
+                with self.assertRaises(ValueError): azure_admin.build_command("kafka-rg", value, "status")
