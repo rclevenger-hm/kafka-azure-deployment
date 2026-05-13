@@ -21,3 +21,7 @@ class AdminTests(unittest.TestCase):
         self.assertTrue(script.startswith("set -eu\n"))
         self.assertIn("kafka-refresh --apply-change", script)
         self.assertIn("KAFKA_REFRESH_OK", script)
+
+    def test_version_selected_explicitly(self):
+        version = "2026-09-20T13:00:00.0000000Z"
+        self.assertIn(version, azure_admin.guest_script("refresh", True, version))
