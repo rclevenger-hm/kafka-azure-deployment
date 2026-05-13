@@ -30,3 +30,6 @@ class AdminTests(unittest.TestCase):
         for value in ("x; id", "$(id)", "a\nwhoami", "*", "broker-1 broker-2"):
             with self.subTest(value=value):
                 with self.assertRaises(ValueError): azure_admin.build_command("kafka-rg", value, "status")
+
+    def test_resource_group_injection(self):
+        with self.assertRaises(ValueError): azure_admin.build_command("a;id", "kafka-broker-1", "status")
