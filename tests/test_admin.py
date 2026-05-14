@@ -36,3 +36,7 @@ class AdminTests(unittest.TestCase):
 
     def test_version_injection(self):
         with self.assertRaises(ValueError): azure_admin.guest_script("refresh", True, "$(id)")
+
+    def test_status_rejects_mutations(self):
+        with self.assertRaises(ValueError): azure_admin.guest_script("status", True)
+        with self.assertRaises(ValueError): azure_admin.guest_script("status", False, "latest")
