@@ -33,3 +33,6 @@ class AdminTests(unittest.TestCase):
 
     def test_resource_group_injection(self):
         with self.assertRaises(ValueError): azure_admin.build_command("a;id", "kafka-broker-1", "status")
+
+    def test_version_injection(self):
+        with self.assertRaises(ValueError): azure_admin.guest_script("refresh", True, "$(id)")
