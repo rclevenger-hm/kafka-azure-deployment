@@ -43,3 +43,9 @@ class AdminTests(unittest.TestCase):
 
     def test_unknown_action(self):
         with self.assertRaises(ValueError): azure_admin.guest_script("delete")
+
+    @patch("azure_admin.subprocess.run")
+    def test_refresh_does_not_execute_by_default(self, run):
+        with contextlib.redirect_stdout(io.StringIO()):
+            azure_admin.main(["--resource-group", "kafka-rg", "--node", "kafka-broker-1", "refresh", "--apply-change"])
+        run.assert_not_called()
