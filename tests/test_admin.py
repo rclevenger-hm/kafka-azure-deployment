@@ -40,3 +40,6 @@ class AdminTests(unittest.TestCase):
     def test_status_rejects_mutations(self):
         with self.assertRaises(ValueError): azure_admin.guest_script("status", True)
         with self.assertRaises(ValueError): azure_admin.guest_script("status", False, "latest")
+
+    def test_unknown_action(self):
+        with self.assertRaises(ValueError): azure_admin.guest_script("delete")
