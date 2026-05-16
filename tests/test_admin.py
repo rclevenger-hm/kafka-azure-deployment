@@ -49,3 +49,9 @@ class AdminTests(unittest.TestCase):
         with contextlib.redirect_stdout(io.StringIO()):
             azure_admin.main(["--resource-group", "kafka-rg", "--node", "kafka-broker-1", "refresh", "--apply-change"])
         run.assert_not_called()
+
+    @patch("azure_admin.subprocess.run")
+    def test_guest_failure_not_hidden_by_cli_success(self, run):
+        run.return_value.stdout = json.dumps({"value": [{"message": "runtime failed"}]})
+        with contextlib.redirect_stdout(io.StringIO()), self.assertRaises(SystemExit):
+            azure_admin.main(["--resource-group", "kafka-rg", "--node", "kafka-broker-1", "refresh", "--execute"])
