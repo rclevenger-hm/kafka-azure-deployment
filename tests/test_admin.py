@@ -55,3 +55,10 @@ class AdminTests(unittest.TestCase):
         run.return_value.stdout = json.dumps({"value": [{"message": "runtime failed"}]})
         with contextlib.redirect_stdout(io.StringIO()), self.assertRaises(SystemExit):
             azure_admin.main(["--resource-group", "kafka-rg", "--node", "kafka-broker-1", "refresh", "--execute"])
+
+    @patch("azure_admin.subprocess.run")
+    def test_success_marker(self, run):
+        run.return_value.stdout = json.dumps({"value": [{"message": "KAFKA_REFRESH_OK\n"}]})
+        with contextlib.redirect_stdout(io.StringIO()):
+            azure_admin.main(["--resource-group", "kafka-rg", "--node", "kafka-broker-1", "refresh", "--execute"])
+        self.assertTrue(run.call_args.kwargs["check"])
