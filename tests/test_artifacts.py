@@ -20,3 +20,5 @@ class ArtifactTests(unittest.TestCase):
             path=Path(temp)/"artifact"
             with self.assertRaises(ValueError): provision.download_verified("https://example.test/a", path, "0"*64, "sha256")
             self.assertFalse(path.exists()); self.assertFalse(Path(str(path)+".partial").exists())
+    def test_http_rejected(self):
+        with self.assertRaises(ValueError): provision.download_verified("http://example.test/a", "/tmp/unused", "0"*64)
