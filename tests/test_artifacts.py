@@ -22,3 +22,9 @@ class ArtifactTests(unittest.TestCase):
             self.assertFalse(path.exists()); self.assertFalse(Path(str(path)+".partial").exists())
     def test_http_rejected(self):
         with self.assertRaises(ValueError): provision.download_verified("http://example.test/a", "/tmp/unused", "0"*64)
+    def test_archive_traversal_rejected(self):
+        with tempfile.TemporaryDirectory() as temp:
+            archive=Path(temp)/"bad.tgz"
+            with tarfile.open(archive, "w:gz") as tar:
+                info=tarfile.TarInfo("../escape"); info.size=1; tar.addfile(info, io.BytesIO(b"x"))
+            with self.assertRaises(ValueError): provision.extract_verified(archive, Path(temp)/"dest")
