@@ -15,3 +15,8 @@ class ArtifactTests(unittest.TestCase):
             provision.download_verified("https://example.test/a", path, digest, "sha256")
             self.assertEqual(fetch.call_count, 1)
             self.assertEqual(path.read_bytes(), payload)
+    def test_checksum_failure_does_not_install(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(provision.urllib.request, "urlopen", return_value=io.BytesIO(b"tampered")):
+            path=Path(temp)/"artifact"
+            with self.assertRaises(ValueError): provision.download_verified("https://example.test/a", path, "0"*64, "sha256")
+            self.assertFalse(path.exists()); self.assertFalse(Path(str(path)+".partial").exists())
