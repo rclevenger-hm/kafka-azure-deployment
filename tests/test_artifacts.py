@@ -28,3 +28,9 @@ class ArtifactTests(unittest.TestCase):
             with tarfile.open(archive, "w:gz") as tar:
                 info=tarfile.TarInfo("../escape"); info.size=1; tar.addfile(info, io.BytesIO(b"x"))
             with self.assertRaises(ValueError): provision.extract_verified(archive, Path(temp)/"dest")
+    def test_archive_symlink_rejected(self):
+        with tempfile.TemporaryDirectory() as temp:
+            archive=Path(temp)/"bad.tgz"
+            with tarfile.open(archive, "w:gz") as tar:
+                info=tarfile.TarInfo("link"); info.type=tarfile.SYMTYPE; info.linkname="/etc/passwd"; tar.addfile(info)
+            with self.assertRaises(ValueError): provision.extract_verified(archive, Path(temp)/"dest")
