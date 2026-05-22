@@ -41,3 +41,10 @@ class ArtifactTests(unittest.TestCase):
         with patch.object(provision, "download_verified") as download:
             provision.download_kafka("4.3.1", "/tmp/kafka.tgz", "a" * 128)
             self.assertTrue(download.call_args.args[0].startswith("https://dlcdn.apache.org/"))
+    def test_archived_release_falls_back_with_same_digest(self):
+        missing = provision.urllib.error.HTTPError("https://example.test", 404, "archived", {}, None)
+        with patch.object(provision, "download_verified", side_effect=[missing, None]) as download:
+            provision.download_kafka("4.3.1", "/tmp/kafka.tgz", "a" * 128)
+            self.assertEqual(download.call_count, 2)
+            self.assertTrue(download.call_args.args[0].startswith("https://archive.apache.org/"))
+            self.assertEqual(download.call_args.args[2], "a" * 128)
