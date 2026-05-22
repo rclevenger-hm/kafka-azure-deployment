@@ -34,3 +34,5 @@ class ArtifactTests(unittest.TestCase):
             with tarfile.open(archive, "w:gz") as tar:
                 info=tarfile.TarInfo("link"); info.type=tarfile.SYMTYPE; info.linkname="/etc/passwd"; tar.addfile(info)
             with self.assertRaises(ValueError): provision.extract_verified(archive, Path(temp)/"dest")
+    def test_pinned_secret_version_required(self):
+        with self.assertRaises(ValueError): provision.azure.secret_payload("https://test.vault.azure.net/secrets/node/latest", "00000000-0000-0000-0000-000000000001")
