@@ -36,3 +36,8 @@ class ArtifactTests(unittest.TestCase):
             with self.assertRaises(ValueError): provision.extract_verified(archive, Path(temp)/"dest")
     def test_pinned_secret_version_required(self):
         with self.assertRaises(ValueError): provision.azure.secret_payload("https://test.vault.azure.net/secrets/node/latest", "00000000-0000-0000-0000-000000000001")
+
+    def test_release_cdn_is_preferred(self):
+        with patch.object(provision, "download_verified") as download:
+            provision.download_kafka("4.3.1", "/tmp/kafka.tgz", "a" * 128)
+            self.assertTrue(download.call_args.args[0].startswith("https://dlcdn.apache.org/"))
