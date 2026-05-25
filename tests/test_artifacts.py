@@ -48,3 +48,7 @@ class ArtifactTests(unittest.TestCase):
             self.assertEqual(download.call_count, 2)
             self.assertTrue(download.call_args.args[0].startswith("https://archive.apache.org/"))
             self.assertEqual(download.call_args.args[2], "a" * 128)
+    def test_checksum_failure_does_not_try_another_mirror(self):
+        with patch.object(provision, "download_verified", side_effect=ValueError("checksum")) as download:
+            with self.assertRaises(ValueError): provision.download_kafka("4.3.1", "/tmp/kafka.tgz", "a" * 128)
+            self.assertEqual(download.call_count, 1)
