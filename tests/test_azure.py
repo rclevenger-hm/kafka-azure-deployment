@@ -15,3 +15,8 @@ class ManagedDiskTests(unittest.TestCase):
         value = {"lun": "0", "managedDisk": {"id": config()["data_disk_id"]}}
         value.update(changes)
         return value
+
+    def disk(self, **changes):
+        value = dict(name="/dev/sdc", type="disk", mountpoints=[None])
+        value.update(changes)
+        return value
