@@ -10,3 +10,8 @@ import azure
 refresh = load("bootstrap/refresh.py", "refresh")
 
 
+class ManagedDiskTests(unittest.TestCase):
+    def metadata(self, **changes):
+        value = {"lun": "0", "managedDisk": {"id": config()["data_disk_id"]}}
+        value.update(changes)
+        return value
