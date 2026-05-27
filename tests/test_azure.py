@@ -20,3 +20,7 @@ class ManagedDiskTests(unittest.TestCase):
         value = dict(name="/dev/sdc", type="disk", mountpoints=[None])
         value.update(changes)
         return value
+
+    def test_exact_managed_disk_and_lun_required(self):
+        self.assertTrue(azure.verify_disk([self.metadata()], config()["data_disk_id"], 0))
+        self.assertFalse(azure.verify_disk([self.metadata(lun="1")], config()["data_disk_id"], 0))
