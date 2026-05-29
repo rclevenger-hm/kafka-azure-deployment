@@ -27,3 +27,7 @@ class ManagedDiskTests(unittest.TestCase):
 
     def test_resource_ids_are_case_insensitive(self):
         self.assertTrue(azure.verify_disk([self.metadata()], config()["data_disk_id"].upper(), 0))
+
+    def test_wrong_disk_identity_fails_before_format(self):
+        with self.assertRaises(ValueError):
+            azure.verify_disk([self.metadata(managedDisk={"id": "foreign"})], config()["data_disk_id"], 0)
