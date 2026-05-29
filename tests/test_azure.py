@@ -24,3 +24,6 @@ class ManagedDiskTests(unittest.TestCase):
     def test_exact_managed_disk_and_lun_required(self):
         self.assertTrue(azure.verify_disk([self.metadata()], config()["data_disk_id"], 0))
         self.assertFalse(azure.verify_disk([self.metadata(lun="1")], config()["data_disk_id"], 0))
+
+    def test_resource_ids_are_case_insensitive(self):
+        self.assertTrue(azure.verify_disk([self.metadata()], config()["data_disk_id"].upper(), 0))
