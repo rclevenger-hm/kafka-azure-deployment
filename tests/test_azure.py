@@ -31,3 +31,7 @@ class ManagedDiskTests(unittest.TestCase):
     def test_wrong_disk_identity_fails_before_format(self):
         with self.assertRaises(ValueError):
             azure.verify_disk([self.metadata(managedDisk={"id": "foreign"})], config()["data_disk_id"], 0)
+
+    def test_duplicate_lun_is_rejected(self):
+        with self.assertRaises(ValueError):
+            azure.verify_disk([self.metadata(), self.metadata()], config()["data_disk_id"], 0)
