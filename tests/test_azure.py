@@ -52,3 +52,7 @@ class ManagedDiskTests(unittest.TestCase):
         for disks in [[], [self.disk(), self.disk()]]:
             with self.subTest(disks=disks), self.assertRaises(ValueError):
                 provision.select_data_device(disks, "/dev/sdc")
+
+    def test_partitioned_data_disk_is_rejected(self):
+        with self.assertRaises(ValueError):
+            provision.select_data_device([self.disk(children=[{"name": "/dev/sdc1"}])], "/dev/sdc")
