@@ -35,3 +35,8 @@ class ManagedDiskTests(unittest.TestCase):
     def test_duplicate_lun_is_rejected(self):
         with self.assertRaises(ValueError):
             azure.verify_disk([self.metadata(), self.metadata()], config()["data_disk_id"], 0)
+
+    def test_invalid_lun_values_are_rejected(self):
+        for lun in [-1, 64, True, "0"]:
+            with self.subTest(lun=lun), self.assertRaises(ValueError):
+                azure.verify_disk([], config()["data_disk_id"], lun)
