@@ -40,3 +40,6 @@ class ManagedDiskTests(unittest.TestCase):
         for lun in [-1, 64, True, "0"]:
             with self.subTest(lun=lun), self.assertRaises(ValueError):
                 azure.verify_disk([], config()["data_disk_id"], lun)
+
+    def test_invalid_cloud_disk_id_rejected(self):
+        with self.assertRaises(ValueError): azure.verify_disk([], "/dev/sda", 0)
