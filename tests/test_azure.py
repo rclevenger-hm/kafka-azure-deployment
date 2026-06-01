@@ -47,3 +47,8 @@ class ManagedDiskTests(unittest.TestCase):
     def test_selected_lun_survives_device_enumeration_changes(self):
         for path in ["/dev/sdc", "/dev/sdd"]:
             self.assertEqual(provision.select_data_device([self.disk(name=path)], path), Path(path))
+
+    def test_missing_or_duplicate_device_fails_closed(self):
+        for disks in [[], [self.disk(), self.disk()]]:
+            with self.subTest(disks=disks), self.assertRaises(ValueError):
+                provision.select_data_device(disks, "/dev/sdc")
