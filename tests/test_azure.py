@@ -43,3 +43,7 @@ class ManagedDiskTests(unittest.TestCase):
 
     def test_invalid_cloud_disk_id_rejected(self):
         with self.assertRaises(ValueError): azure.verify_disk([], "/dev/sda", 0)
+
+    def test_selected_lun_survives_device_enumeration_changes(self):
+        for path in ["/dev/sdc", "/dev/sdd"]:
+            self.assertEqual(provision.select_data_device([self.disk(name=path)], path), Path(path))
