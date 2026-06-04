@@ -64,3 +64,8 @@ class ManagedDiskTests(unittest.TestCase):
 
     def test_kafka_mount_is_accepted(self):
         self.assertEqual(provision.select_data_device([self.disk(mountpoints=["/var/lib/kafka"])], "/dev/sdc"), Path('/dev/sdc'))
+
+    def test_nvme_and_injected_device_paths_are_rejected(self):
+        for path in ["/dev/nvme0n1", "/dev/sdc;reboot", "/dev/sdc1"]:
+            with self.subTest(path=path), self.assertRaises(ValueError):
+                provision.select_data_device([self.disk(name=path)], path)
