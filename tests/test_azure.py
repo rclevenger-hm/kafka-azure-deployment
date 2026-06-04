@@ -61,3 +61,6 @@ class ManagedDiskTests(unittest.TestCase):
         for mount in ["/", "/mnt", "/home", "/var/lib/other"]:
             with self.subTest(mount=mount), self.assertRaises(ValueError):
                 provision.select_data_device([self.disk(mountpoints=[mount])], "/dev/sdc")
+
+    def test_kafka_mount_is_accepted(self):
+        self.assertEqual(provision.select_data_device([self.disk(mountpoints=["/var/lib/kafka"])], "/dev/sdc"), Path('/dev/sdc'))
