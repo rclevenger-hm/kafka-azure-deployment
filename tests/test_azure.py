@@ -78,3 +78,9 @@ class ManagedIdentityTests(unittest.TestCase):
             self.assertIn('client_id=' + config()['identity_client_id'], call.call_args.args[0])
             self.assertIn('resource=https%3A%2F%2Fvault.azure.net', call.call_args.args[0])
             self.assertEqual(call.call_args.args[1], {'Metadata': 'true'})
+
+    def test_invalid_identity_or_resource_never_calls_imds(self):
+        for identity, audience in [('bad', 'https://vault.azure.net'), (config()['identity_client_id'], 'https://attacker')]:
+            with self.subTest(identity=identity, audience=audience), patch.object(azure, 'request') as call:
+                with self.assertRaises(ValueError): azure.token(identity, audience)
+                call.assert_not_called()
