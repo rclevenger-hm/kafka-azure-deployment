@@ -69,3 +69,12 @@ class ManagedDiskTests(unittest.TestCase):
         for path in ["/dev/nvme0n1", "/dev/sdc;reboot", "/dev/sdc1"]:
             with self.subTest(path=path), self.assertRaises(ValueError):
                 provision.select_data_device([self.disk(name=path)], path)
+
+
+class ManagedIdentityTests(unittest.TestCase):
+    def test_explicit_identity_and_audience_requested(self):
+        with patch.object(azure, 'request', return_value=(b'{"access_token":"private-token"}', {})) as call:
+            self.assertEqual(azure.token(config()['identity_client_id'], 'https://vault.azure.net'), 'private-token')
+            self.assertIn('client_id=' + config()['identity_client_id'], call.call_args.args[0])
+            self.assertIn('resource=https%3A%2F%2Fvault.azure.net', call.call_args.args[0])
+            self.assertEqual(call.call_args.args[1], {'Metadata': 'true'})
