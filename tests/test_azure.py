@@ -84,3 +84,7 @@ class ManagedIdentityTests(unittest.TestCase):
             with self.subTest(identity=identity, audience=audience), patch.object(azure, 'request') as call:
                 with self.assertRaises(ValueError): azure.token(identity, audience)
                 call.assert_not_called()
+
+    def test_missing_token_fails_closed(self):
+        with patch.object(azure, 'request', return_value=(b'{}', {})):
+            with self.assertRaises(ValueError): azure.token(config()['identity_client_id'], 'https://vault.azure.net')
