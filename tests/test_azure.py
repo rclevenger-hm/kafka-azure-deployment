@@ -88,3 +88,13 @@ class ManagedIdentityTests(unittest.TestCase):
     def test_missing_token_fails_closed(self):
         with patch.object(azure, 'request', return_value=(b'{}', {})):
             with self.assertRaises(ValueError): azure.token(config()['identity_client_id'], 'https://vault.azure.net')
+
+    def test_response_read_is_bounded(self):
+        response = Mock()
+        response.read.return_value = b'x' * 11
+        response.__enter__ = Mock(return_value=response)
+        response.__exit__ = Mock(return_value=False)
+        opener = Mock(); opener.open.return_value = response
+        with patch.object(azure.urllib.request, 'build_opener', return_value=opener):
+            with self.assertRaises(ValueError): azure.request('https://example.com', maximum=10)
+        response.read.assert_called_once_with(11)
