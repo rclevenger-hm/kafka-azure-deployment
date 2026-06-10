@@ -98,3 +98,6 @@ class ManagedIdentityTests(unittest.TestCase):
         with patch.object(azure.urllib.request, 'build_opener', return_value=opener):
             with self.assertRaises(ValueError): azure.request('https://example.com', maximum=10)
         response.read.assert_called_once_with(11)
+
+    def test_authenticated_redirects_are_forbidden(self):
+        with self.assertRaises(ValueError): azure.NoRedirect().redirect_request(None, None, 302, '', {}, 'https://attacker')
