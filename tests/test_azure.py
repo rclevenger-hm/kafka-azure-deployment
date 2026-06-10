@@ -101,3 +101,10 @@ class ManagedIdentityTests(unittest.TestCase):
 
     def test_authenticated_redirects_are_forbidden(self):
         with self.assertRaises(ValueError): azure.NoRedirect().redirect_request(None, None, 302, '', {}, 'https://attacker')
+
+    def test_http_access_denied_is_not_retried(self):
+        opener = Mock(); opener.open.side_effect = urllib.error.HTTPError('https://vault', 403, 'denied', {}, None)
+        with patch.object(azure.urllib.request, 'build_opener', return_value=opener), patch.object(azure.time, 'sleep') as sleep:
+            with self.assertRaises(urllib.error.HTTPError): azure.request('https://vault')
+            self.assertEqual(opener.open.call_count, 1)
+            sleep.assert_not_called()
