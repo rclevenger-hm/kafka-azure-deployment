@@ -115,3 +115,8 @@ class KeyVaultTests(unittest.TestCase):
         value = {'id': config()['tls_secret_version'], 'value': json.dumps({'certificate': 'test'})}
         value.update(changes)
         return json.dumps(value).encode(), {}
+
+    def test_exact_version_requested(self):
+        with patch.object(azure, 'token', return_value='token'), patch.object(azure, 'request', return_value=self.response()) as call:
+            self.assertEqual(azure.secret_payload(config()['tls_secret_version'], config()['identity_client_id']), {'certificate': 'test'})
+            self.assertEqual(call.call_args.args[0], config()['tls_secret_version'] + '?api-version=7.4')
