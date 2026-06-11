@@ -108,3 +108,10 @@ class ManagedIdentityTests(unittest.TestCase):
             with self.assertRaises(urllib.error.HTTPError): azure.request('https://vault')
             self.assertEqual(opener.open.call_count, 1)
             sleep.assert_not_called()
+
+
+class KeyVaultTests(unittest.TestCase):
+    def response(self, **changes):
+        value = {'id': config()['tls_secret_version'], 'value': json.dumps({'certificate': 'test'})}
+        value.update(changes)
+        return json.dumps(value).encode(), {}
