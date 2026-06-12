@@ -120,3 +120,7 @@ class KeyVaultTests(unittest.TestCase):
         with patch.object(azure, 'token', return_value='token'), patch.object(azure, 'request', return_value=self.response()) as call:
             self.assertEqual(azure.secret_payload(config()['tls_secret_version'], config()['identity_client_id']), {'certificate': 'test'})
             self.assertEqual(call.call_args.args[0], config()['tls_secret_version'] + '?api-version=7.4')
+
+    def test_wrong_response_identity_rejected(self):
+        with patch.object(azure, 'token', return_value='token'), patch.object(azure, 'request', return_value=self.response(id='other')):
+            with self.assertRaises(ValueError): azure.secret_payload(config()['tls_secret_version'], config()['identity_client_id'])
