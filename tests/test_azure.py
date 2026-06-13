@@ -124,3 +124,10 @@ class KeyVaultTests(unittest.TestCase):
     def test_wrong_response_identity_rejected(self):
         with patch.object(azure, 'token', return_value='token'), patch.object(azure, 'request', return_value=self.response(id='other')):
             with self.assertRaises(ValueError): azure.secret_payload(config()['tls_secret_version'], config()['identity_client_id'])
+
+    def test_mutable_version_and_foreign_endpoint_rejected(self):
+        base = config()['tls_secret_version']
+        for url in [base.rsplit('/', 1)[0], base.rsplit('/', 1)[0] + '/latest', base.replace('vault.azure.net', 'attacker.test'), base + '?redirect=bad']:
+            with self.subTest(url=url), patch.object(azure, 'token') as token:
+                with self.assertRaises(ValueError): azure.secret_payload(url, config()['identity_client_id'])
+                token.assert_not_called()
