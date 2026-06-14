@@ -131,3 +131,7 @@ class KeyVaultTests(unittest.TestCase):
             with self.subTest(url=url), patch.object(azure, 'token') as token:
                 with self.assertRaises(ValueError): azure.secret_payload(url, config()['identity_client_id'])
                 token.assert_not_called()
+
+    def test_non_object_payload_rejected(self):
+        with patch.object(azure, 'token', return_value='token'), patch.object(azure, 'request', return_value=self.response(value='[]')):
+            with self.assertRaises(ValueError): azure.secret_payload(config()['tls_secret_version'], config()['identity_client_id'])
