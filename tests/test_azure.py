@@ -135,3 +135,11 @@ class KeyVaultTests(unittest.TestCase):
     def test_non_object_payload_rejected(self):
         with patch.object(azure, 'token', return_value='token'), patch.object(azure, 'request', return_value=self.response(value='[]')):
             with self.assertRaises(ValueError): azure.secret_payload(config()['tls_secret_version'], config()['identity_client_id'])
+
+
+class ManifestTests(unittest.TestCase):
+    URL = 'https://kafkaruntime123.blob.core.windows.net/kafka-broker-1/runtime.json'
+    VERSION = '2026-09-30T12:00:00.0000000Z'
+
+    def manifest(self):
+        return dict(schema_version=1, files={name: 'content' for name in refresh.FILES}, config=config())
