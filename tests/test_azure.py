@@ -143,3 +143,6 @@ class ManifestTests(unittest.TestCase):
 
     def manifest(self):
         return dict(schema_version=1, files={name: 'content' for name in refresh.FILES}, config=config())
+
+    def test_exact_manifest_shape(self):
+        self.assertEqual(refresh.validate_manifest(self.manifest()), self.manifest())
