@@ -151,3 +151,9 @@ class ManifestTests(unittest.TestCase):
         for mutate in [lambda m: m.update(schema_version=2), lambda m: m['files'].update({'../passwd': 'bad'}), lambda m: m['files'].pop('azure.py'), lambda m: m['files'].update({'azure.py': None})]:
             value = self.manifest(); mutate(value)
             with self.assertRaises(ValueError): refresh.validate_manifest(value)
+
+    def test_blob_read_records_version(self):
+        with patch.object(azure, 'token', return_value='token'), patch.object(azure, 'request', return_value=(b'{"schema_version":1}', {'x-ms-version-id': self.VERSION})):
+            value, version = azure.runtime_manifest(self.URL, config()['identity_client_id'])
+            self.assertEqual(value['schema_version'], 1)
+            self.assertEqual(version, self.VERSION)
