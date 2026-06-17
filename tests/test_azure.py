@@ -157,3 +157,8 @@ class ManifestTests(unittest.TestCase):
             value, version = azure.runtime_manifest(self.URL, config()['identity_client_id'])
             self.assertEqual(value['schema_version'], 1)
             self.assertEqual(version, self.VERSION)
+
+    def test_explicit_rollback_version_encoded_and_verified(self):
+        with patch.object(azure, 'token', return_value='token'), patch.object(azure, 'request', return_value=(b'{}', {'x-ms-version-id': self.VERSION})) as call:
+            azure.runtime_manifest(self.URL, config()['identity_client_id'], self.VERSION)
+            self.assertIn('versionid=2026-09-30T12%3A00%3A00.0000000Z', call.call_args.args[0])
