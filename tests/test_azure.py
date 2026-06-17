@@ -146,3 +146,8 @@ class ManifestTests(unittest.TestCase):
 
     def test_exact_manifest_shape(self):
         self.assertEqual(refresh.validate_manifest(self.manifest()), self.manifest())
+
+    def test_invalid_schema_or_file_names_rejected(self):
+        for mutate in [lambda m: m.update(schema_version=2), lambda m: m['files'].update({'../passwd': 'bad'}), lambda m: m['files'].pop('azure.py'), lambda m: m['files'].update({'azure.py': None})]:
+            value = self.manifest(); mutate(value)
+            with self.assertRaises(ValueError): refresh.validate_manifest(value)
