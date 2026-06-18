@@ -162,3 +162,8 @@ class ManifestTests(unittest.TestCase):
         with patch.object(azure, 'token', return_value='token'), patch.object(azure, 'request', return_value=(b'{}', {'x-ms-version-id': self.VERSION})) as call:
             azure.runtime_manifest(self.URL, config()['identity_client_id'], self.VERSION)
             self.assertIn('versionid=2026-09-30T12%3A00%3A00.0000000Z', call.call_args.args[0])
+
+    def test_wrong_or_missing_blob_version_rejected(self):
+        for headers in [{}, {'x-ms-version-id': 'wrong'}]:
+            with self.subTest(headers=headers), patch.object(azure, 'token', return_value='token'), patch.object(azure, 'request', return_value=(b'{}', headers)):
+                with self.assertRaises(ValueError): azure.runtime_manifest(self.URL, config()['identity_client_id'], self.VERSION)
