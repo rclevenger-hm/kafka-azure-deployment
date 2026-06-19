@@ -173,3 +173,8 @@ class ManifestTests(unittest.TestCase):
             with self.subTest(url=url), patch.object(azure, 'token') as token:
                 with self.assertRaises(ValueError): azure.runtime_manifest(url, config()['identity_client_id'])
                 token.assert_not_called()
+
+    def test_bad_rollback_version_rejected(self):
+        for value in ['latest', 'x&sig=secret', '../']:
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                azure.runtime_manifest(self.URL, config()['identity_client_id'], value)
