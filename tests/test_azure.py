@@ -167,3 +167,9 @@ class ManifestTests(unittest.TestCase):
         for headers in [{}, {'x-ms-version-id': 'wrong'}]:
             with self.subTest(headers=headers), patch.object(azure, 'token', return_value='token'), patch.object(azure, 'request', return_value=(b'{}', headers)):
                 with self.assertRaises(ValueError): azure.runtime_manifest(self.URL, config()['identity_client_id'], self.VERSION)
+
+    def test_untrusted_blob_url_rejected_before_credentials(self):
+        for url in [self.URL.replace('blob.core.windows.net', 'attacker.test'), self.URL + '?sig=secret', self.URL.replace('runtime.json', '../other')]:
+            with self.subTest(url=url), patch.object(azure, 'token') as token:
+                with self.assertRaises(ValueError): azure.runtime_manifest(url, config()['identity_client_id'])
+                token.assert_not_called()
