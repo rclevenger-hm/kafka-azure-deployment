@@ -186,3 +186,14 @@ class RuntimeRefreshTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, 'Runtime change pending'):
                 provision.provision('/tmp/config.json')
             secret.assert_not_called()
+
+    def test_unchanged_healthy_runtime_does_not_restart(self):
+        import hashlib
+        fingerprint = hashlib.sha256(json.dumps({'config': config(), 'files': {}}, sort_keys=True).encode()).hexdigest()
+        def read(path):
+            return json.dumps({'fingerprint': fingerprint}) if str(path) == '/var/lib/kafka-runtime.json' else json.dumps(config())
+        with patch.object(provision.Path, 'read_text', read), patch.object(provision.Path, 'exists', return_value=True), patch.object(provision.Path, 'iterdir', return_value=[]), patch.object(provision.subprocess, 'run', return_value=SimpleNamespace(returncode=0)) as run, patch.object(azure, 'secret_payload') as secret:
+            provision.provision('/tmp/config.json')
+            self.assertEqual(run.call_args.args[0], ['systemctl', 'is-active', '--quiet', 'kafka.service'])
+            self.assertEqual(run.call_count, 1)
+            secret.assert_not_called()
