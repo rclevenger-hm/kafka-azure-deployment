@@ -178,3 +178,11 @@ class ManifestTests(unittest.TestCase):
         for value in ['latest', 'x&sig=secret', '../']:
             with self.subTest(value=value), self.assertRaises(ValueError):
                 azure.runtime_manifest(self.URL, config()['identity_client_id'], value)
+
+
+class RuntimeRefreshTests(unittest.TestCase):
+    def test_changed_runtime_refuses_before_secret_or_service_changes(self):
+        with patch.object(provision.Path, 'read_text', return_value=json.dumps({'fingerprint': 'old', **config()})), patch.object(provision.Path, 'exists', return_value=True), patch.object(provision.Path, 'iterdir', return_value=[]), patch.object(azure, 'secret_payload') as secret:
+            with self.assertRaisesRegex(RuntimeError, 'Runtime change pending'):
+                provision.provision('/tmp/config.json')
+            secret.assert_not_called()
