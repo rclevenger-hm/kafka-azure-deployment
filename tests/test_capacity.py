@@ -13,3 +13,6 @@ class CapacityTests(unittest.TestCase):
         value=capacity.estimate(1,1,brokers=3,overhead=1,utilization=0.5,recovery_mib_s=1)
         self.assertEqual(value["normal_gib_per_broker"],8)
         self.assertEqual(value["estimated_rebuild_seconds_per_lost_broker"],3600)
+    def test_invalid_numeric_inputs(self):
+        for value in (-1,0,math.nan,math.inf):
+            with self.subTest(value=value), self.assertRaises(ValueError): capacity.estimate(value,24)
