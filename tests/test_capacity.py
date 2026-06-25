@@ -16,3 +16,6 @@ class CapacityTests(unittest.TestCase):
     def test_invalid_numeric_inputs(self):
         for value in (-1,0,math.nan,math.inf):
             with self.subTest(value=value), self.assertRaises(ValueError): capacity.estimate(value,24)
+    def test_invalid_topologies(self):
+        for kwargs in ({"brokers":2},{"lost_brokers":3},{"replication":0},{"brokers":3.5},{"utilization":1},{"overhead":0.8}):
+            with self.subTest(kwargs=kwargs), self.assertRaises(ValueError): capacity.estimate(1,24,**kwargs)
