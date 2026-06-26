@@ -7,3 +7,8 @@ class ConfigTests(unittest.TestCase):
         p = self.props()
         self.assertEqual(p["listeners"], "CLIENT://0.0.0.0:9092,BROKER://0.0.0.0:9094")
         self.assertIn("CLIENT://kafka-broker-1.kafka.internal:9092", p["advertised.listeners"])
+    def test_controllers_are_dedicated(self):
+        p = self.props("controller")
+        self.assertEqual(p["process.roles"], "controller")
+        self.assertEqual(p["listeners"], "CONTROLLER://0.0.0.0:9093")
+        self.assertEqual(p["advertised.listeners"], "CONTROLLER://kafka-controller-1.kafka.internal:9093")
