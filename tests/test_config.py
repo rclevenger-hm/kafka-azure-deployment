@@ -12,3 +12,8 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(p["process.roles"], "controller")
         self.assertEqual(p["listeners"], "CONTROLLER://0.0.0.0:9093")
         self.assertEqual(p["advertised.listeners"], "CONTROLLER://kafka-controller-1.kafka.internal:9093")
+    def test_tls_cannot_fall_back_to_plaintext(self):
+        p = self.props()
+        self.assertEqual(p["ssl.client.auth"], "required")
+        self.assertEqual(p["ssl.endpoint.identification.algorithm"], "https")
+        self.assertNotIn("PLAINTEXT", p["listener.security.protocol.map"])
