@@ -17,3 +17,7 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(p["ssl.client.auth"], "required")
         self.assertEqual(p["ssl.endpoint.identification.algorithm"], "https")
         self.assertNotIn("PLAINTEXT", p["listener.security.protocol.map"])
+    def test_acl_fail_closed(self):
+        p = self.props()
+        self.assertEqual(p["allow.everyone.if.no.acl.found"], "false")
+        self.assertTrue(p["authorizer.class.name"].endswith("StandardAuthorizer"))
