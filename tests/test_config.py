@@ -21,3 +21,8 @@ class ConfigTests(unittest.TestCase):
         p = self.props()
         self.assertEqual(p["allow.everyone.if.no.acl.found"], "false")
         self.assertTrue(p["authorizer.class.name"].endswith("StandardAuthorizer"))
+    def test_replication_durability(self):
+        p = self.props()
+        self.assertEqual(p["default.replication.factor"], "3")
+        self.assertEqual(p["min.insync.replicas"], "2")
+        self.assertEqual(p["unclean.leader.election.enable"], "false")
