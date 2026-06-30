@@ -26,3 +26,7 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(p["default.replication.factor"], "3")
         self.assertEqual(p["min.insync.replicas"], "2")
         self.assertEqual(p["unclean.leader.election.enable"], "false")
+    def test_dynamic_quorum(self):
+        p = self.props()
+        self.assertIn("controller.quorum.bootstrap.servers", p)
+        self.assertNotIn("controller.quorum.voters", p)
