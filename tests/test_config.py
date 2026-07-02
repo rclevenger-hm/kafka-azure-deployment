@@ -30,3 +30,5 @@ class ConfigTests(unittest.TestCase):
         p = self.props()
         self.assertIn("controller.quorum.bootstrap.servers", p)
         self.assertNotIn("controller.quorum.voters", p)
+    def test_rack_is_azure_zone(self):
+        self.assertEqual(self.props()["broker.rack"], "1")
