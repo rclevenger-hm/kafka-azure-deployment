@@ -32,3 +32,5 @@ class ConfigTests(unittest.TestCase):
         self.assertNotIn("controller.quorum.voters", p)
     def test_rack_is_azure_zone(self):
         self.assertEqual(self.props()["broker.rack"], "1")
+    def test_no_topic_autocreation(self):
+        self.assertEqual(self.props()["auto.create.topics.enable"], "false")
