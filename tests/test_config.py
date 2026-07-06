@@ -34,3 +34,8 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(self.props()["broker.rack"], "1")
     def test_no_topic_autocreation(self):
         self.assertEqual(self.props()["auto.create.topics.enable"], "false")
+    def test_config_injection_is_rejected(self):
+        for field in ("node_name", "fqdn", "super_users", "quorum", "zone", "kafka_version"):
+            with self.subTest(field=field):
+                c = config(); c[field] += "\nallow.everyone.if.no.acl.found=true"
+                with self.assertRaises(ValueError): provision.render_properties(c)
