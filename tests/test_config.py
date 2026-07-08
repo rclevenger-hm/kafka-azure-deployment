@@ -42,3 +42,6 @@ class ConfigTests(unittest.TestCase):
     def test_invalid_role_rejected(self):
         c = config(); c["role"] = "broker,controller"
         with self.assertRaises(ValueError): provision.validate_config(c)
+    def test_boolean_node_id_rejected(self):
+        c = config(); c["node_id"] = True
+        with self.assertRaises(ValueError): provision.validate_config(c)
