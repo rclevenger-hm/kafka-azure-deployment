@@ -39,3 +39,6 @@ class ConfigTests(unittest.TestCase):
             with self.subTest(field=field):
                 c = config(); c[field] += "\nallow.everyone.if.no.acl.found=true"
                 with self.assertRaises(ValueError): provision.render_properties(c)
+    def test_invalid_role_rejected(self):
+        c = config(); c["role"] = "broker,controller"
+        with self.assertRaises(ValueError): provision.validate_config(c)
