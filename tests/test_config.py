@@ -45,3 +45,6 @@ class ConfigTests(unittest.TestCase):
     def test_boolean_node_id_rejected(self):
         c = config(); c["node_id"] = True
         with self.assertRaises(ValueError): provision.validate_config(c)
+    def test_bad_cluster_id_rejected(self):
+        c = config(); c["cluster_id"] = "short"
+        with self.assertRaises(ValueError): provision.validate_config(c)
