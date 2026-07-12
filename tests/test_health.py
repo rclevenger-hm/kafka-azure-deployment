@@ -8,3 +8,5 @@ class HealthTests(unittest.TestCase):
         with self.assertRaises(ValueError): health.parse_quorum('LeaderId: 100\nMaxFollowerLag: 5\nCurrentVoters: [100,101,102]')
     def test_missing_leader_rejected(self):
         with self.assertRaises(ValueError): health.parse_quorum('LeaderId: -1\nMaxFollowerLag: 0\nCurrentVoters: [100,101,102]')
+    def test_missing_voter_rejected(self):
+        with self.assertRaises(ValueError): health.parse_quorum('LeaderId: 100\nMaxFollowerLag: 0\nCurrentVoters: [100,101]')
