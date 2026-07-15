@@ -16,3 +16,6 @@ class PkiTests(unittest.TestCase):
         provision.install_tls(self.bundle,config(),target)
         self.assertEqual((target/"node.pem").stat().st_mode & 0o777,0o600)
         self.assertIn("BEGIN PRIVATE KEY",(target/"node.pem").read_text())
+    def test_wrong_hostname_fails(self):
+        c=config(); c["fqdn"]="wrong.kafka.internal"
+        with self.assertRaises(Exception): provision.install_tls(self.bundle,c,Path(self.temp.name)/"wrong")
