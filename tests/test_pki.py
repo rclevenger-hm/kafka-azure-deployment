@@ -19,3 +19,6 @@ class PkiTests(unittest.TestCase):
     def test_wrong_hostname_fails(self):
         c=config(); c["fqdn"]="wrong.kafka.internal"
         with self.assertRaises(Exception): provision.install_tls(self.bundle,c,Path(self.temp.name)/"wrong")
+    def test_wrong_principal_fails(self):
+        c=config(); c["node_name"]="kafka-broker-2"
+        with self.assertRaises(ValueError): provision.install_tls(self.bundle,c,Path(self.temp.name)/"principal")
