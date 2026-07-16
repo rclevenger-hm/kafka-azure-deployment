@@ -27,3 +27,5 @@ class PkiTests(unittest.TestCase):
     def test_missing_material_rejected(self):
         bundle=dict(self.bundle); del bundle["private_key"]
         with self.assertRaises(ValueError): provision.install_tls(bundle,config(),Path(self.temp.name)/"missing")
+    def test_subject_injection_rejected(self):
+        with self.assertRaises(ValueError): pki.issue(self.root,"bad/OU=admin")
