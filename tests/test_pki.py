@@ -22,3 +22,5 @@ class PkiTests(unittest.TestCase):
     def test_wrong_principal_fails(self):
         c=config(); c["node_name"]="kafka-broker-2"
         with self.assertRaises(ValueError): provision.install_tls(self.bundle,c,Path(self.temp.name)/"principal")
+    def test_overwrite_prohibited(self):
+        with self.assertRaises(FileExistsError): pki.issue(self.root,"kafka-broker-1","kafka-broker-1.kafka.internal")
