@@ -24,3 +24,6 @@ class PkiTests(unittest.TestCase):
         with self.assertRaises(ValueError): provision.install_tls(self.bundle,c,Path(self.temp.name)/"principal")
     def test_overwrite_prohibited(self):
         with self.assertRaises(FileExistsError): pki.issue(self.root,"kafka-broker-1","kafka-broker-1.kafka.internal")
+    def test_missing_material_rejected(self):
+        bundle=dict(self.bundle); del bundle["private_key"]
+        with self.assertRaises(ValueError): provision.install_tls(bundle,config(),Path(self.temp.name)/"missing")
