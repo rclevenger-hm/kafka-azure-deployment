@@ -6,3 +6,6 @@ class StorageTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(); self.root = Path(self.temp.name)
     def tearDown(self): self.temp.cleanup()
+    def identity(self, folder, cluster="cluster", node=1):
+        path = self.root / folder; path.mkdir(exist_ok=True)
+        (path / "meta.properties").write_text(f"# Kafka metadata\ncluster.id={cluster}\nnode.id={node}\nversion=1\n")
