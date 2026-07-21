@@ -11,3 +11,6 @@ class StorageTests(unittest.TestCase):
         (path / "meta.properties").write_text(f"# Kafka metadata\ncluster.id={cluster}\nnode.id={node}\nversion=1\n")
     def test_fresh_empty_disk_can_format(self):
         self.assertFalse(provision.verify_identity(self.root, "cluster", 1))
+    def test_repeat_uses_existing_identity(self):
+        self.identity("data"); self.identity("metadata")
+        self.assertTrue(provision.verify_identity(self.root, "cluster", 1))
