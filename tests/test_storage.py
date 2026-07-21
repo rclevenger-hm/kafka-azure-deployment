@@ -9,3 +9,5 @@ class StorageTests(unittest.TestCase):
     def identity(self, folder, cluster="cluster", node=1):
         path = self.root / folder; path.mkdir(exist_ok=True)
         (path / "meta.properties").write_text(f"# Kafka metadata\ncluster.id={cluster}\nnode.id={node}\nversion=1\n")
+    def test_fresh_empty_disk_can_format(self):
+        self.assertFalse(provision.verify_identity(self.root, "cluster", 1))
