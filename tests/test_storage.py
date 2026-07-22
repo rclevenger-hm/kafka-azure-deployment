@@ -14,3 +14,6 @@ class StorageTests(unittest.TestCase):
     def test_repeat_uses_existing_identity(self):
         self.identity("data"); self.identity("metadata")
         self.assertTrue(provision.verify_identity(self.root, "cluster", 1))
+    def test_foreign_cluster_is_rejected(self):
+        self.identity("data", "foreign"); self.identity("metadata", "foreign")
+        with self.assertRaises(ValueError): provision.verify_identity(self.root, "cluster", 1)
