@@ -20,3 +20,6 @@ class StorageTests(unittest.TestCase):
     def test_foreign_node_is_rejected(self):
         self.identity("data", node=2); self.identity("metadata", node=2)
         with self.assertRaises(ValueError): provision.verify_identity(self.root, "cluster", 1)
+    def test_partial_format_is_rejected(self):
+        self.identity("metadata")
+        with self.assertRaises(ValueError): provision.verify_identity(self.root, "cluster", 1)
