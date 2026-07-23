@@ -23,3 +23,6 @@ class StorageTests(unittest.TestCase):
     def test_partial_format_is_rejected(self):
         self.identity("metadata")
         with self.assertRaises(ValueError): provision.verify_identity(self.root, "cluster", 1)
+    def test_nonempty_unformatted_disk_is_rejected(self):
+        (self.root / "data").mkdir(); (self.root / "data" / "partition.log").write_text("valuable")
+        with self.assertRaises(ValueError): provision.verify_identity(self.root, "cluster", 1)
