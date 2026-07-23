@@ -26,3 +26,8 @@ class StorageTests(unittest.TestCase):
     def test_nonempty_unformatted_disk_is_rejected(self):
         (self.root / "data").mkdir(); (self.root / "data" / "partition.log").write_text("valuable")
         with self.assertRaises(ValueError): provision.verify_identity(self.root, "cluster", 1)
+    def test_atomic_write_permissions(self):
+        path = self.root / "secret"
+        provision.atomic_write(path, "first", 0o600); provision.atomic_write(path, "second", 0o600)
+        self.assertEqual(path.read_text(), "second")
+        self.assertEqual(path.stat().st_mode & 0o777, 0o600)
