@@ -13,3 +13,13 @@
 - [Live acceptance](acceptance.md)
 - [Failure exercises](failure-exercises.md)
 
+## Runbooks
+
+- [Daily operations and ACLs](runbooks/operations.md)
+- [Rolling upgrades](runbooks/rolling-upgrade.md)
+- [Certificate rotation](runbooks/certificate-rotation.md)
+- [Recovery](runbooks/recovery.md)
+- [Broker scaling](runbooks/scaling.md)
+- [Disk expansion](runbooks/storage-expansion.md)
+- [Decommission](runbooks/decommission.md)
+
