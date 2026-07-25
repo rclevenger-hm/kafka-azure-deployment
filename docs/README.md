@@ -23,3 +23,10 @@
 - [Disk expansion](runbooks/storage-expansion.md)
 - [Decommission](runbooks/decommission.md)
 
+## Decisions and follow-up
+
+- [Self-managed VMs](decisions/001-self-managed.md)
+- [Separate runtime lifecycle](decisions/002-runtime-lifecycle.md)
+- [Zonal availability](decisions/003-availability.md)
+- [Qualification roadmap](roadmap.md)
+- [Primary references](references.md)
