@@ -6,3 +6,7 @@ Record subscription, region, source SHA, image/Kafka/JDK/provider versions, oper
 
 Confirm three actual zones, VM placement, no node public IPs, explicit NSG denies, Trusted Launch, encrypted disks, data-export restrictions and destruction guards. Verify management-only storage firewall access, private endpoint DNS, Key Vault public networking disabled, exact node role scopes and lack of cross-node secret/container access. Confirm action-group notification delivery and VNet flow-log ingestion.
 
+## Bootstrap and recovery
+
+Verify the pinned image, agent and Python tooling; wait for successful initial bootstrap on all nodes. Check IMDS disk IDs, LUNs, UUID mounts, unprivileged service and cluster/node metadata. Exercise delayed attachment, foreign-disk refusal, unchanged refresh without restart and reboot with preserved data. Record accepted manifest versions and a tested rollback.
+
