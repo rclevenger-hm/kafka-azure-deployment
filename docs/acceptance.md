@@ -14,3 +14,7 @@ Verify the pinned image, agent and Python tooling; wait for successful initial b
 
 Require a three-voter healthy quorum, expected brokers/racks and complete ISR. Verify mTLS, wrong-hostname/untrusted-client denial and unauthorized topic/group denial. Create RF3 topics with minimum ISR2 and test exact retained records. Verify application certificate/ACL mappings and producer `acks=all` behavior.
 
+## Failure and capacity
+
+Complete [failure exercises](failure-exercises.md): broker outage writes/recovery, controller leader failover, node reboot and reviewed zone isolation. Benchmark realistic load and record latency, throughput, retention headroom and recovery bandwidth. Demonstrate that a second failure beyond the designed quorum/ISR budget fails safely.
+
