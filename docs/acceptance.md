@@ -18,3 +18,6 @@ Require a three-voter healthy quorum, expected brokers/racks and complete ISR. V
 
 Complete [failure exercises](failure-exercises.md): broker outage writes/recovery, controller leader failover, node reboot and reviewed zone isolation. Benchmark realistic load and record latency, throughput, retention headroom and recovery bandwidth. Demonstrate that a second failure beyond the designed quorum/ISR budget fails safely.
 
+## Operations and DR
+
+Test one-node certificate rotation and runtime upgrade/rollback, disk expansion, private administration and alert delivery. Restore from the chosen backup/replication strategy into an isolated environment, verify consumer positions/data and measure RPO/RTO. Keep results, known limitations and the go-live owner in the environment's change record.
