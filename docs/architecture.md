@@ -21,3 +21,9 @@ An explicit inbound deny overrides Azure's default VNet-wide allow. Outbound rul
 
 Runtime Blob Storage uses ZRS, versioning, HTTPS and Entra authentication with shared keys disabled. Its firewall allows the existing management subnet through a Microsoft.Storage service endpoint. Nodes resolve the Blob and Key Vault names to private endpoints. The private DNS zones are linked to the Kafka VNet; link or forward DNS separately for clients/management networks.
 
+## Disk guards
+
+Bootstrap checks IMDS managedDisk.id and LUN against the declared resource before resolving `/dev/disk/azure/scsi1/lun0`. It rejects ambiguous devices, partitions, foreign mounts and unsupported controllers. Only a disk with no detected signatures is formatted. Existing ext4 storage is mounted by UUID; conflicting fstab entries and hidden mountpoint data are refused. Kafka cluster and node metadata must match; partial or nonempty unformatted directories are refused.
+
+VMs, data disks, runtime storage and the resource group have Terraform destruction guards. These guards do not prevent privileged portal/API actions or replace replication and backup. Data disks cannot attach across zones.
+
