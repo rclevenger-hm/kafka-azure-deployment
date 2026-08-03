@@ -27,3 +27,11 @@ Bootstrap checks IMDS managedDisk.id and LUN against the declared resource befor
 
 VMs, data disks, runtime storage and the resource group have Terraform destruction guards. These guards do not prevent privileged portal/API actions or replace replication and backup. Data disks cannot attach across zones.
 
+## Runtime lifecycle
+
+Terraform writes one manifest per node in that node's private container. Custom data installs a small initial loader and a retrying systemd bootstrap. This handles asynchronous disk attachment and managed-identity propagation. Initial provisioning records the runtime fingerprint only after Kafka starts.
+
+Updating a manifest does not restart running Kafka. `kafka-refresh` obtains a versioned manifest under an exclusive local lock. A changed fingerprint requires `--apply-change`; an unchanged healthy process is left running. Artifacts, TLS and disk identity are checked before stopping the service. Subsequent VM boots use already installed binaries/configuration and the UUID mount; Blob/Key Vault access is needed for refresh, not ordinary service starts.
+
+The loader embedded in VM custom data is separate from manifest content. Changes to that loader, image or VM shape can require replacement and are blocked by `prevent_destroy`; follow the one-node replacement runbook. A per-node lock does not coordinate two different nodes. Health gates and single-node maintenance remain operator responsibilities.
+
