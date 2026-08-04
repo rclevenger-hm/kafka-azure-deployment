@@ -35,3 +35,6 @@ Updating a manifest does not restart running Kafka. `kafka-refresh` obtains a ve
 
 The loader embedded in VM custom data is separate from manifest content. Changes to that loader, image or VM shape can require replacement and are blocked by `prevent_destroy`; follow the one-node replacement runbook. A per-node lock does not coordinate two different nodes. Health gates and single-node maintenance remain operator responsibilities.
 
+## Durability
+
+Defaults are replication factor 3, minimum ISR 2, no unclean leader election and no topic auto-creation. Applications must use `acks=all` and suitable idempotence/transactions. Existing topics retain their explicit settings. Verify replica placement across zones: infrastructure placement alone is insufficient. Three brokers cannot restore RF3 after permanent broker loss without replacement capacity.
