@@ -26,3 +26,16 @@ Create a versioned, private, protected state account/container outside this modu
 
 Copy `terraform/backend.hcl.example` and configure a unique environment key. Its OIDC setting is suitable for federated CI; remove `use_oidc` for an approved interactive Azure CLI session. Set `ARM_SUBSCRIPTION_ID`, `ARM_TENANT_ID` and the appropriate identity settings; `subscription_id` in Terraform inputs must agree. Do not put client secrets or account keys in committed files.
 
+## TLS bundles
+
+Each node requires exact `CN=<node-name>`, its private advertised FQDN in DNS SAN, both serverAuth/clientAuth usages and an unencrypted PKCS8 key. Each JSON secret contains PEM string fields `certificate`, `private_key` and `ca`. Use organizational PKI for production.
+
+For a disposable lab:
+
+```bash
+python3 tools/lab_pki.py --out pki --prefix kafka --domain kafka.internal --brokers 3
+az keyvault secret set --vault-name YOUR_VAULT --name kafka-broker-1   --file pki/kafka-broker-1.json --encoding utf-8 --query id -o tsv
+```
+
+The generator refuses overwrite and uses 30-day certificates. Protect all files, keep the CA key offline, and retain the admin identity only on authorized hosts. Upload each node's JSON to its own secret from the vault's approved private path. `--query id` prevents printing the secret value. Record the final 32-hex version component for each node. Populate `tls_secrets` with exactly the configured node names and distinct secret names. Terraform grants each node read access only to its own secret; the manifest pins one immutable version.
+
