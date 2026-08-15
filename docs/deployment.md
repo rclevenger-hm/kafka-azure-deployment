@@ -20,3 +20,9 @@ az vm image list --location eastus --publisher Canonical   --offer ubuntu-24_04-
 
 Review and test an explicit version, then set `ubuntu_image_version`. `latest` is rejected. Test Python 3, cloud-init, the Azure Linux Agent and the SCSI LUN symlink in a canary. A later image change needs a reviewed one-node replacement.
 
+## State and identity
+
+Create a versioned, private, protected state account/container outside this module. Grant the deployer Storage Blob Data Contributor on the state container and provide its private network/DNS path. Blob lease locking is built in; never disable locking. State contains sensitive infrastructure/provider metadata even though this module never reads TLS private-key values.
+
+Copy `terraform/backend.hcl.example` and configure a unique environment key. Its OIDC setting is suitable for federated CI; remove `use_oidc` for an approved interactive Azure CLI session. Set `ARM_SUBSCRIPTION_ID`, `ARM_TENANT_ID` and the appropriate identity settings; `subscription_id` in Terraform inputs must agree. Do not put client secrets or account keys in committed files.
+
