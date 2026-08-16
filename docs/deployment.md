@@ -39,3 +39,17 @@ az keyvault secret set --vault-name YOUR_VAULT --name kafka-broker-1   --file pk
 
 The generator refuses overwrite and uses 30-day certificates. Protect all files, keep the CA key offline, and retain the admin identity only on authorized hosts. Upload each node's JSON to its own secret from the vault's approved private path. `--query id` prevents printing the secret value. Record the final 32-hex version component for each node. Populate `tls_secrets` with exactly the configured node names and distinct secret names. Terraform grants each node read access only to its own secret; the manifest pins one immutable version.
 
+## Plan and apply
+
+```bash
+cp terraform/terraform.tfvars.example terraform/terraform.tfvars
+cp terraform/backend.hcl.example terraform/backend.hcl
+# Replace all placeholders and review network, identity, image and state inputs.
+terraform -chdir=terraform init -reconfigure -backend-config=backend.hcl
+terraform -chdir=terraform plan -out=deployment.tfplan
+terraform -chdir=terraform apply deployment.tfplan
+terraform -chdir=terraform output
+```
+
+Run from the prepared management subnet. Review the subscription, region, three zones, absence of node public IPs, deny rules, encrypted disks and secret scopes. First-time RBAC propagation can cause a Blob authorization failure despite a completed role assignment; wait for propagation and rerun a reviewed plan without weakening the firewall or using shared keys. Initial node bootstrap retries transient identity/network/attachment failures.
+
