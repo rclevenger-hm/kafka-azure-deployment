@@ -53,3 +53,9 @@ terraform -chdir=terraform output
 
 Run from the prepared management subnet. Review the subscription, region, three zones, absence of node public IPs, deny rules, encrypted disks and secret scopes. First-time RBAC propagation can cause a Blob authorization failure despite a completed role assignment; wait for propagation and rerun a reviewed plan without weakening the firewall or using shared keys. Initial node bootstrap retries transient identity/network/attachment failures.
 
+## Manual CI deployment
+
+The optional `deploy.yml` workflow uses `workflow_dispatch`, OIDC and an existing runner labeled `self-hosted`, `linux`, `kafka-azure`. Configure environment `kafka-azure` with required reviewers and branch restrictions. Set environment variables `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID`; set protected secrets `AZURE_BACKEND_HCL` and `AZURE_TFVARS_JSON` with reviewed backend configuration and JSON Terraform inputs. No TLS payload belongs in either.
+
+Bind the federated identity to this repository's protected environment. Use a dedicated, preferably ephemeral runner in the approved subnet; never expose it to untrusted pull requests. The workflow defaults to plan-only; an explicit apply input applies that run's saved plan. It does not roll running Kafka. Deployment concurrency prevents overlapping workflow applies, while Blob lease locking also protects state. No deployment workflow runs on ordinary pushes.
+
