@@ -59,3 +59,12 @@ The optional `deploy.yml` workflow uses `workflow_dispatch`, OIDC and an existin
 
 Bind the federated identity to this repository's protected environment. Use a dedicated, preferably ephemeral runner in the approved subnet; never expose it to untrusted pull requests. The workflow defaults to plan-only; an explicit apply input applies that run's saved plan. It does not roll running Kafka. Deployment concurrency prevents overlapping workflow applies, while Blob lease locking also protects state. No deployment workflow runs on ordinary pushes.
 
+## Inspect and accept
+
+```bash
+python3 tools/azure_admin.py --resource-group kafka-rg --node kafka-broker-1 status
+```
+
+Run Command executes through the VM agent with privileged Azure control-plane permission; no public SSH is needed. Check initial bootstrap, Kafka status and the UUID mount. Inspect errors before retrying an initial `kafka-refresh`; changes to an installed fingerprint require the [rolling runbook](runbooks/rolling-upgrade.md).
+
+From a private client host, protect a copy of [client.properties.example](../config/client.properties.example) with absolute certificate paths. Resolve every broker, then use `tools/health.py` and `tools/smoke.py` with the `bootstrap_servers` output. Complete [acceptance](acceptance.md), add application ACLs and install monitoring before admitting traffic.
