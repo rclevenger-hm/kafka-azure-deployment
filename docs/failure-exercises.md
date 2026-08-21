@@ -12,3 +12,7 @@ Stop one broker while retaining its disk. Verify `acks=all` writes continue with
 
 Identify the current controller leader, stop only that process and verify another voter is elected. Confirm client metadata/produce/consume continue and the restarted controller rejoins with zero lag. Never deliberately remove two controllers outside a separately approved disaster-recovery exercise.
 
+## Host and disk
+
+Reboot one node and confirm UUID mounting precedes Kafka startup without formatting. In a disposable replacement test, delay the expected disk attachment, then restore it and verify bootstrap retries. Present a different disk at the LUN and require refusal without writes. Confirm the old VM is fenced before replacement identity reuse.
+
