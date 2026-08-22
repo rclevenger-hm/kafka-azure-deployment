@@ -20,3 +20,6 @@ Reboot one node and confirm UUID mounting precedes Kafka startup without formatt
 
 Use an approved Azure fault-injection plan to isolate one zone. Verify the remaining controller majority, zone-aware replica placement, client routing, NAT independence and management availability. Restore the zone and verify complete data/ISR/quorum recovery. These cloud behaviors are not established by the loopback integration suite.
 
+## TLS and restoration
+
+Rotate one leaf certificate, test an untrusted certificate and rehearse a dual-CA transition. Verify expired or mismatched material is rejected before stopping a healthy service. Restore the chosen backup/DR system in isolation and measure retained records, offsets and recovery objectives before declaring the plan usable.
