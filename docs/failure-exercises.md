@@ -16,3 +16,7 @@ Identify the current controller leader, stop only that process and verify anothe
 
 Reboot one node and confirm UUID mounting precedes Kafka startup without formatting. In a disposable replacement test, delay the expected disk attachment, then restore it and verify bootstrap retries. Present a different disk at the LUN and require refusal without writes. Confirm the old VM is fenced before replacement identity reuse.
 
+## Zone and management paths
+
+Use an approved Azure fault-injection plan to isolate one zone. Verify the remaining controller majority, zone-aware replica placement, client routing, NAT independence and management availability. Restore the zone and verify complete data/ISR/quorum recovery. These cloud behaviors are not established by the loopback integration suite.
+
