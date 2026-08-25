@@ -12,3 +12,6 @@ Each VM has an availability metric alert. Connect existing `action_group_ids` an
 
 Add organizational Azure Activity Log, Key Vault, Blob and OS log collection with suitable retention/access controls. Flow logs describe network traffic, not Kafka authorization or message contents. Boot diagnostics and Run Command assist startup investigation; never log TLS secret responses.
 
+## Service indicators
+
+Measure client produce/consume errors and p99, end-to-end lag, ISR recovery time, controller lag, partition availability, disk space/latency and certificate expiry. Test routing and DNS from real client networks. Infrastructure availability cannot replace a replicated application roundtrip.
