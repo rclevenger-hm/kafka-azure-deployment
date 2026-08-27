@@ -21,3 +21,8 @@ The comparison inspected OCI `9f2b2b41d36f75a1fe58f040f3f54ddd3d3b02dc`, GCP `82
 | Verification | Python, Terraform mock plans, six-process Kafka | Azure REST/disk regressions, mock plans, real TLS/ACL/fault integration |
 | Delivery | Infrastructure and operational guides | Manual OIDC plan/apply on a private runner; guarded rollout runbooks |
 
+## Improvements and tradeoffs
+
+Explicit NSG deny rules avoid the broad built-in VNet allow. Managed identity requests select the intended client ID, refuse authenticated redirects, bound response sizes and validate pinned secret/blob responses. Data-disk export is disabled. Runtime storage uses Entra-only access and ZRS. Unchanged healthy refreshes avoid unnecessary restarts.
+
+Ubuntu/Dsv5/SCSI and Azure public-cloud endpoints are deliberate supported boundaries. Terraform does not rotate machines automatically, deploy a managed Kafka service or create organizational PKI. Run Command permission is root-equivalent and must be restricted. Provider mocks cannot establish live-cloud parity; [acceptance](acceptance.md) covers the remaining Azure evidence.
