@@ -11,3 +11,13 @@
 - [Linux VM Run Command](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/run-command)
 - [Virtual network flow logs](https://learn.microsoft.com/en-us/azure/network-watcher/vnet-flow-logs-overview)
 
+## Implementation
+
+- [Kafka downloads and checksums](https://kafka.apache.org/downloads/)
+- [Kafka documentation](https://kafka.apache.org/documentation/)
+- [JMX exporter](https://prometheus.github.io/jmx_exporter/)
+- [AzureRM provider source and resource documentation](https://github.com/hashicorp/terraform-provider-azurerm)
+- [Azure Blob Terraform backend](https://developer.hashicorp.com/terraform/language/backend/azurerm)
+- [Terraform mock providers](https://developer.hashicorp.com/terraform/language/tests/mocking)
+
+Consult version-specific release notes before upgrading; linked services evolve independently of pinned repository versions.
