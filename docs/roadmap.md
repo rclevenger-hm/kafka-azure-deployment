@@ -8,3 +8,6 @@ Complete live provisioning, RBAC propagation, bootstrap, disk/reboot recovery, R
 
 Benchmark realistic load and zone failure. Rehearse certificate/CA rotation, one-node image replacement, manifest rollback and controller membership recovery. Measure RPO/RTO against a tested remote replication/backup strategy.
 
+## Future extensions
+
+Consider destination-filtered egress, automated organizational PKI integration, fleet maintenance coordination and approved additional VM/disk families. Each extension needs failure tests and explicit supported contracts; NVMe and sovereign-cloud support are currently outside scope.
