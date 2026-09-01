@@ -10,3 +10,7 @@ az keyvault secret set --vault-name YOUR_VAULT --name kafka-broker-1   --file /s
 
 Record the new 32-hex version and change only that node's `tls_secrets` entry. Apply a reviewed manifest-only plan and follow the one-node [rolling procedure](rolling-upgrade.md). Terraform never reads the PEM values. Confirm clients reconnect, peers authenticate and metrics/health recover before another rotation.
 
+## CA rollover
+
+Distribute a trust bundle containing both old and new CAs, one node at a time, then rotate node and client leaves to the new CA. Verify all peers and applications migrated before removing the old CA through a second controlled roll. Keep exact CN/ACL mappings stable unless an explicit authorization migration is planned.
+
