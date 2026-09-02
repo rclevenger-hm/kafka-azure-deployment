@@ -14,3 +14,6 @@ Record the new 32-hex version and change only that node's `tls_secrets` entry. A
 
 Distribute a trust bundle containing both old and new CAs, one node at a time, then rotate node and client leaves to the new CA. Verify all peers and applications migrated before removing the old CA through a second controlled roll. Keep exact CN/ACL mappings stable unless an explicit authorization migration is planned.
 
+## Expiry or compromise
+
+The bootstrap rejects certificates with less than 24 hours remaining; monitor expiry well before that threshold. If compromised, revoke access and rotate the affected identity immediately through the incident procedure. Do not bypass mTLS or enable allow-everyone authorization to recover. A rollback manifest may reference an expired or disabled secret; validate retained credentials before relying on it.
