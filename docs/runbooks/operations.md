@@ -20,3 +20,6 @@ Issue a distinct certificate with a unique CN, ensure private DNS/routing, allow
 
 Review ACL semantics for your workload before granting. Test permitted and forbidden operations. Use idempotent producers with `acks=all`; review topic RF, minimum ISR and retention explicitly because broker defaults do not change existing topics.
 
+## Maintenance
+
+Record the source revision, cluster identity, accepted manifest versions and rollback procedure. Require complete health before and after each node. Coordinate upgrades, reassignment and storage work so they do not overlap. Stop on offline partitions, quorum lag, persistent ISR loss or client SLO breach. No helper performs a fleet-wide refresh.
