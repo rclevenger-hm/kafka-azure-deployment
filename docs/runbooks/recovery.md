@@ -10,3 +10,9 @@ Restart the process if identity and disk checks are intact. For VM loss, retain 
 
 If the disk is irrecoverable, preserve evidence and rebuild replicas from healthy brokers using explicit replacement capacity. Empty replacement storage must belong to the intended node/cluster. `prevent_destroy` requires deliberate code review; do not discard Terraform state or broadly remove guards. With three brokers, permanent loss requires replacement to restore RF3.
 
+## Controllers
+
+One controller can be recovered while two healthy voters maintain quorum. Preserve its metadata disk and directory identity. If a controller must be replaced with new storage, use Kafka's supported dynamic-quorum membership procedure, verify the voter directory ID and catch-up, then remove the retired member. Merely changing Terraform IDs or zone inputs is not a membership migration.
+
+Loss of a controller majority requires a rehearsed Kafka disaster recovery procedure and retained metadata evidence. Do not format a fresh quorum over broker data and assume consistency.
+
