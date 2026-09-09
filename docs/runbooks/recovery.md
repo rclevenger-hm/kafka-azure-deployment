@@ -16,3 +16,7 @@ One controller can be recovered while two healthy voters maintain quorum. Preser
 
 Loss of a controller majority requires a rehearsed Kafka disaster recovery procedure and retained metadata evidence. Do not format a fresh quorum over broker data and assume consistency.
 
+## Zone loss
+
+Azure managed disks are zonal. Restore the zone, rebuild broker replicas into reviewed replacement capacity, or restore a supported snapshot to the target zone with explicit identity reconciliation. Moving a controller across zones requires a membership plan. Verify private DNS, advertised addresses, replica rack placement and NAT/management reachability after recovery.
+
