@@ -20,3 +20,6 @@ Loss of a controller majority requires a rehearsed Kafka disaster recovery proce
 
 Azure managed disks are zonal. Restore the zone, rebuild broker replicas into reviewed replacement capacity, or restore a supported snapshot to the target zone with explicit identity reconciliation. Moving a controller across zones requires a membership plan. Verify private DNS, advertised addresses, replica rack placement and NAT/management reachability after recovery.
 
+## Disaster recovery
+
+Independent disk snapshots are not an atomic cluster backup. Define a tested recovery strategy for topics, offsets, ACLs, schema/application dependencies and metadata. The [MirrorMaker2 example](../../config/mirrormaker2.properties.example) is a starting configuration; no remote cluster or replication service is deployed. Measure RPO/RTO with retained records and consumer positions, and fence the old cluster before promoting a recovery site.
