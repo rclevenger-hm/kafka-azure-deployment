@@ -16,3 +16,9 @@ python3 tools/azure_admin.py --resource-group kafka-rg --node kafka-broker-1 ref
 
 The helper defaults to printing the exact command; add `--execute` to perform this state-changing operation. Refresh stages a bounded versioned manifest, validates disk/artifacts/TLS, stops the one node and applies its configuration. Check the resulting service, accepted blob version, full ISR and quorum health. Run the smoke test before moving to another node. Roll brokers individually, then nonleader controllers one at a time, then the controller leader. Never stop two controllers together.
 
+## Rollback
+
+Stop on unavailable partitions, growing lag, sustained client failures or missing replicas. Restore desired Terraform inputs and review the resulting manifest-only plan. If the target release permits downgrade and no incompatible feature level was finalized, refresh the affected node using the prior source.
+
+A recorded immutable manifest can be selected with `--version-id RECORDED_VERSION --apply-change`. It still depends on retained Kafka artifacts and its exact Key Vault version. Ensure Blob retention and restore procedures preserve access to historical versions; a deleted/soft-deleted version may need restoration by an authorized storage operator. Reconcile desired Terraform state after a temporary rollback. Manifests cannot undo incompatible data formats or controller membership changes.
+
