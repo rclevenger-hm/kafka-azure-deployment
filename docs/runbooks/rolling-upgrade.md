@@ -22,3 +22,6 @@ Stop on unavailable partitions, growing lag, sustained client failures or missin
 
 A recorded immutable manifest can be selected with `--version-id RECORDED_VERSION --apply-change`. It still depends on retained Kafka artifacts and its exact Key Vault version. Ensure Blob retention and restore procedures preserve access to historical versions; a deleted/soft-deleted version may need restoration by an authorized storage operator. Reconcile desired Terraform state after a temporary rollback. Manifests cannot undo incompatible data formats or controller membership changes.
 
+## VM replacement
+
+Retain the existing zonal data disk, private IP/DNS, Kafka node ID and cluster ID. Fence and stop the old VM so duplicate identities cannot run. Change only the selected node's lifecycle/replacement configuration in a reviewed maintenance branch; inspect the complete plan to ensure no other node or disk is affected. Deallocate/detach according to Azure's supported procedure, attach the preserved disk at LUN0 to the replacement in the same zone, and restore the destruction guard. Do not remove all guards or use a broad target to conceal dependencies. Practice replacement and attachment sequencing in staging before production patching.
