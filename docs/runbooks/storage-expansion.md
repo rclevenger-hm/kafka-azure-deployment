@@ -14,3 +14,6 @@ After Azure reports the new block size, verify the expected IMDS managed disk ID
 
 Confirm `lsblk`, `df -h /var/lib/kafka`, journal/filesystem errors, Kafka health and the roundtrip test. Record before/after capacity. Bootstrap deliberately does not automatically resize an existing filesystem.
 
+## Performance
+
+Broker IOPS and MB/s can be configured separately within the validated Premium SSD v2 capacity/performance relationship. Compare effective throughput with the VM's uncached disk and network ceilings. Increasing disk provisioned performance beyond the VM limit will not improve end-to-end capacity. Preserve bandwidth for replication recovery under ordinary load.
