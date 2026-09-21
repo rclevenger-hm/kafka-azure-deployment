@@ -12,3 +12,9 @@ Nodes have no public IPs. Broker, controller, client, metrics and optional SSH r
 
 OS and data disks use Azure-managed encryption at rest. Disk exports are disabled. Runtime storage uses HTTPS, ZRS, versioning, no anonymous access and no shared-key authentication. Its public endpoint is firewall-limited to the existing deployment subnet with a service endpoint; nodes use Private Link. The TLS vault requires RBAC and disabled public networking. Flow-log delivery uses a separate storage account and Azure-services firewall bypass.
 
+## Runtime protections
+
+Authenticated cloud requests bypass ambient HTTP proxies, reject redirects and bound response sizes. TLS response identity and Blob version are checked. Artifacts are checksum-verified before extraction; archive traversal, links and special files are rejected. The runtime runs as an unprivileged system user with systemd hardening. Private keys and staged manifests use restrictive permissions.
+
+The disk check combines IMDS managed disk ID with the Azure SCSI LUN mapping, then refuses partitions, foreign mounts and unexpected signatures. Kafka metadata must match cluster/node identity. These checks guard mistakes, not a malicious root operator or compromised Azure control plane.
+
