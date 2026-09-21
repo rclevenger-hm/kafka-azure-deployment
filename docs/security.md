@@ -18,3 +18,9 @@ Authenticated cloud requests bypass ambient HTTP proxies, reject redirects and b
 
 The disk check combines IMDS managed disk ID with the Azure SCSI LUN mapping, then refuses partitions, foreign mounts and unexpected signatures. Kafka metadata must match cluster/node identity. These checks guard mistakes, not a malicious root operator or compromised Azure control plane.
 
+## Certificates and authorization
+
+All Kafka listeners require client certificates and hostname verification. The StandardAuthorizer defaults to deny. Node certificates and configured admin principals are superusers; ordinary clients need narrowly scoped topic/group/transactional-ID ACLs. Use a distinct certificate per application and test both allowed and denied operations. Lab-generated credentials are short-lived and not a production PKI.
+
+Plan leaf and CA rotation before expiry. Certificates must match their private keys, SANs and exact node CNs. Validate both clientAuth/serverAuth usages through organizational issuance and live acceptance. Revocation, CRL/OCSP integration and automated PKI rotation are not configured by this repository.
+
