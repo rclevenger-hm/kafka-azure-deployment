@@ -24,3 +24,6 @@ All Kafka listeners require client certificates and hostname verification. The S
 
 Plan leaf and CA rotation before expiry. Certificates must match their private keys, SANs and exact node CNs. Validate both clientAuth/serverAuth usages through organizational issuance and live acceptance. Revocation, CRL/OCSP integration and automated PKI rotation are not configured by this repository.
 
+## Audit and recovery
+
+Collect Azure Activity Logs for VM Run Command, deployment writes and RBAC changes; enable Key Vault/Blob diagnostic policies required by your organization. VNet flow logs and VM alerts are configured here, but organizational log routing/retention is separate. Never publish raw TLS bundles or Terraform state in diagnostics. Protect backend backups, rehearse restore and record an inventory of cluster IDs, disks and accepted runtime versions.
