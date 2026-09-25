@@ -12,3 +12,7 @@
 
 This test requires loopback sockets, internet artifact access and sufficient memory. It uses small heaps and bounded waits for CI. It does not invoke Azure APIs or emulate Azure network/storage failure behavior. Failed process logs identify the failing stage without exposing cloud secrets.
 
+## CI
+
+The GitHub workflow separates Python/repository checks, Terraform, Kafka integration and Prometheus rule checks. Pull requests need no cloud credentials. The manual Azure deployment workflow is separate, opt-in and uses a protected private runner.
+
