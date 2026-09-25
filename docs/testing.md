@@ -16,3 +16,6 @@ This test requires loopback sockets, internet artifact access and sufficient mem
 
 The GitHub workflow separates Python/repository checks, Terraform, Kafka integration and Prometheus rule checks. Pull requests need no cloud credentials. The manual Azure deployment workflow is separate, opt-in and uses a protected private runner.
 
+## Limits
+
+Source checks and mock plans cannot establish real Azure RBAC propagation, quotas, private DNS, OS/agent bootstrap, data-disk attachment, zone failure recovery, workload performance or disaster recovery. Record those results using [acceptance](acceptance.md). Do not substitute a green badge for live environment qualification.
