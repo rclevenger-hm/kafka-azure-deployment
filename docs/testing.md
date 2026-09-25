@@ -6,3 +6,9 @@
 
 `make terraform` formats/initializes, validates real provider schemas and runs mocked plans. Mocks exercise topology, zones, private endpoints, role scopes, storage/performance, denied public inputs and other validation failures. The committed lockfile pins provider checksums. No credentials or cloud resources are needed.
 
+## Real Kafka integration
+
+`make integration` downloads checksum-verified Kafka 4.3.1 and JMX exporter, creates disposable TLS identities and starts three dedicated controllers plus three brokers on loopback with Java 17. It tests authenticated metadata/topic access, denied client authorization, exact RF3 roundtrip, writes while one broker is stopped, persisted recovery after restart and active controller leader failover. It cleans up processes and temporary data.
+
+This test requires loopback sockets, internet artifact access and sufficient memory. It uses small heaps and bounded waits for CI. It does not invoke Azure APIs or emulate Azure network/storage failure behavior. Failed process logs identify the failing stage without exposing cloud secrets.
+
