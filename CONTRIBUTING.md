@@ -10,3 +10,6 @@ Run `make check`, `make terraform` and `make integration`. The integration suite
 
 Test changed trust boundaries and failure behavior. New credentials must use managed identity or an approved federated path; do not embed secrets. Keep runtime rolls separate from infrastructure convergence. Review disk identity, TLS validation, provider changes and any replacement plan carefully. Report live Azure tests separately from mocks, including source revision and environment.
 
+## History
+
+The initial retrospective sequence is documented in NOTICE. New maintenance commits should use their actual dates. Do not rewrite published history or imply that reconstructed timestamps establish historical activity.
