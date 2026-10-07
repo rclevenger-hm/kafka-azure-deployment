@@ -1,0 +1,65 @@
+name: Manual Azure deployment
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: Apply this run's reviewed infrastructure plan (does not roll Kafka)
+        type: boolean
+        default: false
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: kafka-azure-deployment
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: [self-hosted, linux, kafka-azure]
+    environment: kafka-azure
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: terraform
+    env:
+      ARM_USE_OIDC: 'true'
+      ARM_USE_AZUREAD: 'true'
+      ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      TF_IN_AUTOMATION: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.13.5'
+      - name: Prepare, plan and optionally apply
+        shell: bash
+        env:
+          BACKEND_HCL: ${{ secrets.AZURE_BACKEND_HCL }}
+          TFVARS_JSON: ${{ secrets.AZURE_TFVARS_JSON }}
+          APPLY_REQUEST: ${{ inputs.apply }}
+        run: |
+          set -euo pipefail
+          umask 077
+          DEPLOY_TMP=$(mktemp -d)
+          export DEPLOY_TMP
+          trap 'rm -rf "$DEPLOY_TMP"' EXIT
+          python3 - <<'PYTHON'
+          import json, os
+          from pathlib import Path
+          required = ('ARM_CLIENT_ID', 'ARM_TENANT_ID', 'ARM_SUBSCRIPTION_ID', 'BACKEND_HCL', 'TFVARS_JSON')
+          if not all(os.environ.get(key) for key in required):
+              raise SystemExit('Configure protected environment identity, backend and input settings first')
+          inputs = json.loads(os.environ['TFVARS_JSON'])
+          if inputs['subscription_id'] != os.environ['ARM_SUBSCRIPTION_ID']:
+              raise SystemExit('Subscription identity and input must match')
+          root = Path(os.environ['DEPLOY_TMP'])
+          (root / 'backend.hcl').write_text(os.environ['BACKEND_HCL'])
+          (root / 'inputs.tfvars.json').write_text(json.dumps(inputs))
+          PYTHON
+          terraform init -input=false -lockfile=readonly -reconfigure -backend-config="$DEPLOY_TMP/backend.hcl"
+          terraform validate -no-color
+          terraform plan -input=false -lock-timeout=5m -var-file="$DEPLOY_TMP/inputs.tfvars.json" -out="$DEPLOY_TMP/deployment.tfplan"
+          if [ "$APPLY_REQUEST" = true ]; then
+            terraform apply -input=false -lock-timeout=5m "$DEPLOY_TMP/deployment.tfplan"
+          fi

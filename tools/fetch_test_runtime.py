@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+"""Fetch the exact checksummed runtime used by Terraform for integration tests."""
+import argparse
+import importlib.util
+from pathlib import Path
+import re
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "bootstrap"))
+spec = importlib.util.spec_from_file_location("provision", ROOT / "bootstrap/provision.py")
+provision = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(provision)
+
+
+def main():
+    p=argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--out", type=Path, default=ROOT/".local")
+    args=p.parse_args(); args.out.mkdir(parents=True,exist_ok=True)
+    variables=(ROOT/"terraform/variables.tf").read_text()
+    def default(name):
+        return re.search(r'variable "'+name+r'" \{.*?default\s*=\s*"([^"]+)"',variables,re.S)[1]
+    version=default("kafka_version"); digest=default("kafka_sha512")
+    archive=args.out/f"kafka_2.13-{version}.tgz"
+    print(f"Fetching and verifying Kafka {version}", flush=True)
+    provision.download_kafka(version,archive,digest)
+    provision.extract_verified(archive,args.out)
+    provision.download_verified(provision.JMX_URL,args.out/"jmx.jar",provision.JMX_SHA256,"sha256")
+    print(args.out/f"kafka_2.13-{version}")
+
+
+if __name__ == "__main__": main()
