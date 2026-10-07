@@ -20,8 +20,8 @@ def smoke(kafka_home, bootstrap, config, timeout=90):
     try:
         call("kafka-topics.sh", "--command-config", str(config), "--create", "--topic", topic, "--partitions", "3", "--replication-factor", "3", "--config", "min.insync.replicas=2")
         created = True
-        call("kafka-console-producer.sh", "--producer.config", str(config), "--topic", topic, "--producer-property", "acks=all", "--producer-property", "enable.idempotence=true", input=payload + "\n")
-        result = call("kafka-console-consumer.sh", "--consumer.config", str(config), "--topic", topic, "--from-beginning", "--max-messages", "1", "--timeout-ms", str((timeout - 5) * 1000), "--group", topic)
+        call("kafka-console-producer.sh", "--command-config", str(config), "--topic", topic, "--command-property", "acks=all", "--command-property", "enable.idempotence=true", input=payload + "\n")
+        result = call("kafka-console-consumer.sh", "--command-config", str(config), "--topic", topic, "--from-beginning", "--max-messages", "1", "--timeout-ms", str((timeout - 5) * 1000), "--group", topic)
         if result.stdout.strip() != payload:
             raise RuntimeError("Roundtrip payload mismatch")
         return {"ok": True, "topic": topic, "elapsed_seconds": round(time.monotonic() - started, 2)}
