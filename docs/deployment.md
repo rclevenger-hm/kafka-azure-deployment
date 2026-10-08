@@ -55,6 +55,8 @@ Run from the prepared management subnet. Review the subscription, region, three 
 
 ## Manual CI deployment
 
+Update the self-hosted Actions runner to **v2.327.1 or later** before using this workflow; the updated checkout and Terraform setup actions require the Node.js 24 action runtime. Use v2.329.0 or later if adding authenticated Git operations inside Docker actions.
+
 The optional `deploy.yml` workflow uses `workflow_dispatch`, OIDC and an existing runner labeled `self-hosted`, `linux`, `kafka-azure`. Configure environment `kafka-azure` with required reviewers and branch restrictions. Set environment variables `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID`; set protected secrets `AZURE_BACKEND_HCL` and `AZURE_TFVARS_JSON` with reviewed backend configuration and JSON Terraform inputs. No TLS payload belongs in either.
 
 Bind the federated identity to this repository's protected environment. Use a dedicated, preferably ephemeral runner in the approved subnet; never expose it to untrusted pull requests. The workflow defaults to plan-only; an explicit apply input applies that run's saved plan. It does not roll running Kafka. Deployment concurrency prevents overlapping workflow applies, while Blob lease locking also protects state. No deployment workflow runs on ordinary pushes.

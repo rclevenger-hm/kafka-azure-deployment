@@ -96,11 +96,11 @@ def main():
             node = "kafka-broker-1"
             processes[node].terminate(); processes[node].wait(timeout=45)
             payload = "survives-broker-outage-" + uuid.uuid4().hex
-            cli("kafka-console-producer.sh", "--producer.config", str(client), "--topic", durable_topic,
-                "--producer-property", "acks=all", "--producer-property", "enable.idempotence=true",
-                "--producer-property", "delivery.timeout.ms=60000", "--producer-property", "request.timeout.ms=10000", input=payload + "\n")
+            cli("kafka-console-producer.sh", "--command-config", str(client), "--topic", durable_topic,
+                "--command-property", "acks=all", "--command-property", "enable.idempotence=true",
+                "--command-property", "delivery.timeout.ms=60000", "--command-property", "request.timeout.ms=10000", input=payload + "\n")
             def verify_durable():
-                result = cli("kafka-console-consumer.sh", "--consumer.config", str(client), "--topic", durable_topic,
+                result = cli("kafka-console-consumer.sh", "--command-config", str(client), "--topic", durable_topic,
                              "--from-beginning", "--max-messages", "1", "--timeout-ms", "70000",
                              "--group", "verify-" + uuid.uuid4().hex)
                 if result.stdout.strip() != payload:

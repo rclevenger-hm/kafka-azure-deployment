@@ -4,17 +4,15 @@ resource "azurerm_private_dns_zone" "kafka" {
   tags                = local.tags
 }
 resource "azurerm_private_dns_zone_virtual_network_link" "kafka" {
-  name                  = "${var.name_prefix}-link"
-  resource_group_name   = azurerm_resource_group.kafka.name
-  private_dns_zone_name = azurerm_private_dns_zone.kafka.name
-  virtual_network_id    = azurerm_virtual_network.kafka.id
-  registration_enabled  = false
+  name                 = "${var.name_prefix}-link"
+  private_dns_zone_id  = azurerm_private_dns_zone.kafka.id
+  virtual_network_id   = azurerm_virtual_network.kafka.id
+  registration_enabled = false
 }
 resource "azurerm_private_dns_a_record" "node" {
   for_each            = local.nodes
   name                = each.key
-  zone_name           = azurerm_private_dns_zone.kafka.name
-  resource_group_name = azurerm_resource_group.kafka.name
+  private_dns_zone_id = azurerm_private_dns_zone.kafka.id
   ttl                 = 60
   records             = [cidrhost(azurerm_subnet.nodes[each.value.zone].address_prefixes[0], each.value.host)]
 }
@@ -25,12 +23,11 @@ resource "azurerm_private_dns_zone" "service" {
   tags                = local.tags
 }
 resource "azurerm_private_dns_zone_virtual_network_link" "service" {
-  for_each              = azurerm_private_dns_zone.service
-  name                  = "${var.name_prefix}-${each.key}"
-  resource_group_name   = azurerm_resource_group.kafka.name
-  private_dns_zone_name = each.value.name
-  virtual_network_id    = azurerm_virtual_network.kafka.id
-  registration_enabled  = false
+  for_each             = azurerm_private_dns_zone.service
+  name                 = "${var.name_prefix}-${each.key}"
+  private_dns_zone_id  = each.value.id
+  virtual_network_id   = azurerm_virtual_network.kafka.id
+  registration_enabled = false
 }
 resource "azurerm_private_endpoint" "service" {
   for_each            = { blob = azurerm_storage_account.runtime.id, vault = data.azurerm_key_vault.tls.id }
