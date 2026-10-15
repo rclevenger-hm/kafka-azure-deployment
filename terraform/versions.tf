@@ -1,9 +1,16 @@
 terraform {
   required_version = ">= 1.12, < 2.0"
   backend "azurerm" { use_azuread_auth = true }
+  # Keep version attributes on separate lines so Dependabot can update them.
   required_providers {
-    azurerm = { source = "hashicorp/azurerm", version = "~> 5.8.0" }
-    random  = { source = "hashicorp/random", version = "~> 3.7" }
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 5.8.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.7"
+    }
   }
 }
 provider "azurerm" {
